@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillSetu — Give what you know</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#232620;
+  --ink-soft:#4B4A3F;
+  --paper:#FAF8F3;
+  --paper-raised:#FFFFFF;
+  --primary:#1E5C4F;
+  --primary-soft:#28715F;
+  --primary-wash:#E7EFEA;
+  --marigold:#D98A2E;
+  --marigold-wash:#FBEEDC;
+  --line:#E6E2D6;
+  --line-soft:#EFECE3;
+  --muted:#8A8371;
+  --danger:#B5493F;
+  --danger-wash:#F5E2DF;
+  --radius:10px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'Inter', sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.55;
+}
+.font-mono{ font-family:'IBM Plex Mono', monospace; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; border:none; background:none; }
+::selection{ background:var(--marigold-wash); }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.topnav{ position:sticky; top:0; z-index:50; background:var(--paper-raised); border-bottom:1px solid var(--line); }
+.topnav-inner{ max-width:1140px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:17px; letter-spacing:-0.01em; color:var(--ink); }
+.brand-mark{ width:26px; height:26px; border-radius:6px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:11px; }
+.nav-links{ display:flex; gap:2px; align-items:center; }
+.nav-links button{ color:var(--ink-soft); font-size:14px; font-weight:500; padding:9px 13px; border-radius:6px; transition:all .15s; }
+.nav-links button:hover{ color:var(--ink); background:var(--line-soft); }
+.nav-links button.active{ color:var(--primary); background:var(--primary-wash); font-weight:600; }
+.nav-cta{ background:var(--primary) !important; color:#fff !important; padding:9px 16px !important; border-radius:6px; font-weight:600 !important; margin-left:6px; }
+.nav-cta:hover{ background:var(--primary-soft) !important; }
+
+.page{ flex:1; }
+.container{ max-width:1140px; margin:0 auto; padding:0 24px; }
+.container-narrow{ max-width:720px; margin:0 auto; padding:0 24px; }
+
+footer{ border-top:1px solid var(--line); padding:26px 24px; margin-top:64px; }
+footer .container{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.footer-note{ font-size:12.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:8px; font-size:14.5px; font-weight:600; transition:all .15s; white-space:nowrap; }
+.btn-primary{ background:var(--primary); color:#fff; }
+.btn-primary:hover{ background:var(--primary-soft); }
+.btn-accent{ background:var(--marigold); color:#241505; }
+.btn-accent:hover{ background:#C67A24; }
+.btn-outline{ background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+.btn-outline:hover{ background:var(--primary-wash); }
+.btn-ghost{ background:transparent; color:var(--ink-soft); }
+.btn-ghost:hover{ color:var(--ink); }
+.btn-sm{ padding:9px 15px; font-size:13.5px; }
+.btn-block{ width:100%; }
+.btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+.card{ background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:26px; }
+.eyebrow{ font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; font-size:11px; color:var(--primary); font-weight:600; }
+.eyebrow.warm{ color:var(--marigold); }
+.eyebrow.mut{ color:var(--muted); }
+.badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:4px 10px; border-radius:100px; }
+.badge-verified{ background:var(--primary-wash); color:var(--primary); }
+.badge-pending{ background:var(--marigold-wash); color:#8C5A14; }
+.badge-neutral{ background:var(--line-soft); color:var(--ink-soft); }
+.badge-danger{ background:var(--danger-wash); color:var(--danger); }
+.chip{ display:inline-flex; padding:5px 12px; border-radius:100px; font-size:13px; background:var(--primary-wash); color:var(--primary); font-weight:500; }
+.divider{ height:1px; background:var(--line); border:none; margin:24px 0; }
+.hr-dash{ border:none; border-top:1.5px dashed var(--line); margin:20px 0; }
+
+textarea, input[type=text], input[type=number], input[type=tel], select{
+  width:100%; font-family:'Inter',sans-serif; font-size:15px; padding:13px 14px;
+  border:1.5px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); transition:border .15s;
+}
+textarea:focus, input:focus, select:focus{ outline:none; border-color:var(--primary); }
+label.field-label{ display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:7px; }
+
+.hero{ padding:72px 0 56px; }
+.hero-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.07em; text-transform:uppercase; color:var(--primary); font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.hero-eyebrow::before{ content:''; width:20px; height:1.5px; background:var(--primary); }
+.hero h1{ font-weight:800; font-size:clamp(34px,4.6vw,52px); line-height:1.12; letter-spacing:-0.02em; max-width:760px; color:var(--ink); }
+.hero h1 span{ color:var(--primary); }
+.hero p.lede{ font-size:17.5px; color:var(--ink-soft); max-width:560px; margin-top:20px; line-height:1.65; }
+.hero-actions{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+
+.split-cards{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:60px; }
+.side-card{ border:1.5px solid var(--line); border-radius:12px; padding:28px; background:var(--paper-raised); transition:border-color .15s, transform .15s; cursor:pointer; }
+.side-card:hover{ border-color:var(--primary); transform:translateY(-2px); }
+.side-card .num{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); }
+.side-card h3{ font-size:23px; margin:10px 0 10px; color:var(--ink); font-weight:700; letter-spacing:-0.01em; }
+.side-card p{ color:var(--ink-soft); font-size:14.5px; margin-bottom:16px; }
+
+.stat-strip{ display:flex; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-top:52px; }
+.stat-strip .stat{ flex:1; padding:22px 26px; border-right:1px solid var(--line); }
+.stat-strip .stat:last-child{ border-right:none; }
+.stat .stat-num{ font-size:27px; font-weight:800; color:var(--primary); letter-spacing:-0.01em; }
+.stat .stat-label{ font-size:12px; color:var(--muted); margin-top:4px; font-family:'IBM Plex Mono',monospace; }
+
+.section{ padding:56px 0; }
+.section-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px; gap:20px; flex-wrap:wrap; }
+.section-head h2{ font-size:27px; color:var(--ink); font-weight:700; letter-spacing:-0.01em; }
+.section-head p{ color:var(--muted); font-size:14.5px; max-width:440px; }
+
+.flow-steps{ display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative; }
+.flow-step{ padding:18px 18px 0; position:relative; }
+.flow-step .fs-line{ height:2px; background:var(--line); position:relative; margin-bottom:16px; }
+.flow-step .fs-dot{ width:9px; height:9px; border-radius:50%; background:var(--primary); position:absolute; top:-3.5px; left:0; }
+.flow-step h4{ font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:5px; }
+.flow-step p{ font-size:12.5px; color:var(--muted); }
+
+/* Stepper (Match -> Schedule -> Prepare -> Engage -> Feedback) */
+.stage-stepper{ display:flex; align-items:center; margin:26px 0 40px; }
+.stage-item{ display:flex; align-items:center; gap:9px; flex:1; }
+.stage-item .sd{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:'IBM Plex Mono',monospace; flex-shrink:0; }
+.stage-item .sd.done{ background:var(--primary); color:#fff; }
+.stage-item .sd.current{ background:var(--marigold); color:#241505; }
+.stage-item .sd.pending{ background:var(--line-soft); color:var(--muted); }
+.stage-item .sl{ font-size:13px; font-weight:600; color:var(--muted); white-space:nowrap; }
+.stage-item .sl.on{ color:var(--ink); }
+.stage-connector{ flex:1; height:1.5px; background:var(--line); margin:0 4px; }
+
+.page-head{ padding:44px 0 8px; }
+.page-head .eyebrow{ margin-bottom:12px; }
+.page-head h1{ font-size:32px; color:var(--ink); font-weight:800; letter-spacing:-0.015em; }
+.page-head p{ color:var(--muted); margin-top:10px; font-size:15px; max-width:560px; }
+
+.step-track{ display:flex; gap:8px; margin:26px 0 40px; }
+.step-track .st{ flex:1; height:3px; background:var(--line); border-radius:3px; overflow:hidden; }
+.step-track .st.done, .step-track .st.current{ background:var(--marigold); }
+
+.extract-anim{ display:flex; align-items:center; gap:10px; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:13px; padding:16px 0; }
+.dot-flash{ width:6px; height:6px; border-radius:50%; background:var(--marigold); animation:flash 1s infinite; }
+.dot-flash:nth-child(2){ animation-delay:.15s;} .dot-flash:nth-child(3){ animation-delay:.3s;}
+@keyframes flash{ 0%,100%{opacity:.25;} 50%{opacity:1;} }
+
+.struct-card{ border:1.5px solid var(--primary); border-radius:10px; padding:22px; background:var(--primary-wash); }
+.struct-row{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed rgba(30,92,79,0.18); font-size:14px; }
+.struct-row:last-child{ border-bottom:none; }
+.struct-row .k{ color:var(--primary); font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.03em; }
+.struct-row .v{ color:var(--ink); font-weight:500; text-align:right; max-width:60%; }
+
+.profile-head{ display:flex; gap:22px; align-items:flex-start; padding:40px 0 8px; flex-wrap:wrap; }
+.avatar{ width:72px; height:72px; border-radius:14px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:25px; font-weight:700; flex-shrink:0; }
+.profile-info h1{ font-size:27px; color:var(--ink); font-weight:800; letter-spacing:-0.01em; }
+.profile-info .role{ color:var(--ink-soft); font-size:15px; margin-top:4px; }
+.profile-info .meta-row{ display:flex; gap:16px; margin-top:10px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+
+.ledger-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin:26px 0; }
+.ledger-cell{ background:var(--paper-raised); padding:20px; text-align:center; }
+.ledger-cell .lc-num{ font-size:27px; font-weight:800; color:var(--marigold); }
+.ledger-cell .lc-label{ font-size:11.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace; margin-top:4px; }
+
+.two-col{ display:grid; grid-template-columns:2fr 1fr; gap:22px; }
+.skill-tag{ display:inline-flex; align-items:center; gap:6px; padding:7px 13px; border-radius:100px; background:#fff; border:1px solid var(--line); font-size:13.5px; margin:0 8px 8px 0; }
+.skill-tag .lvl{ width:6px; height:6px; border-radius:50%; background:var(--primary); }
+
+.trust-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.trust-col .tc-head{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; font-family:'IBM Plex Mono',monospace; margin-bottom:10px; }
+.trust-row{ display:flex; align-items:center; gap:8px; font-size:13.5px; padding:6px 0; }
+.trust-mark{ width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.trust-mark.v{ background:var(--primary); color:#fff; }
+.trust-mark.s{ background:var(--line-soft); color:var(--muted); }
+
+.verify-step{ display:flex; gap:14px; align-items:flex-start; padding:16px 0; border-bottom:1px solid var(--line-soft); }
+.verify-step:last-child{ border-bottom:none; }
+.verify-num{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; font-family:'IBM Plex Mono',monospace; }
+.verify-num.done{ background:var(--primary); color:#fff; }
+.verify-num.current{ background:var(--marigold-wash); color:var(--marigold); border:1.5px solid var(--marigold); }
+.verify-num.pending{ background:var(--line-soft); color:var(--muted); }
+.verify-body{ flex:1; }
+.verify-title{ font-weight:600; font-size:14.5px; }
+.verify-desc{ font-size:13px; color:var(--muted); margin-top:2px; }
+
+.match-card{ border:1.5px solid var(--line); border-radius:12px; padding:22px; margin-bottom:16px; background:var(--paper-raised); position:relative; transition:border-color .15s; }
+.match-card.best{ border-color:var(--marigold); box-shadow:0 0 0 1px var(--marigold); }
+.match-card.selected{ border-color:var(--primary); box-shadow:0 0 0 1.5px var(--primary); background:var(--primary-wash); }
+.best-tag{ position:absolute; top:-11px; left:20px; background:var(--marigold); color:#241505; font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px; font-family:'IBM Plex Mono',monospace; letter-spacing:.03em; }
+.match-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+.match-reasons{ margin-top:14px; display:flex; flex-direction:column; gap:7px; }
+.match-reason{ display:flex; gap:8px; font-size:13.5px; color:var(--ink-soft); align-items:flex-start; }
+.match-reason .ck{ color:var(--primary); flex-shrink:0; font-weight:700; }
+.considered-tag{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+
+/* Calendar / scheduling */
+.cal-card{ border:1.5px solid var(--primary); border-radius:12px; overflow:hidden; margin-bottom:14px; background:#fff; }
+.cal-head{ background:var(--primary-wash); padding:14px 20px; display:flex; justify-content:space-between; align-items:center; }
+.cal-head .ch-session{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--primary); font-family:'IBM Plex Mono',monospace; }
+.cal-body{ padding:18px 20px; }
+.cal-date-row{ display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+.cal-date-row .cd-day{ font-size:19px; font-weight:800; color:var(--ink); }
+.cal-date-row .cd-time{ font-size:14px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; }
+.cal-mode{ font-size:13px; color:var(--muted); margin-bottom:14px; }
+.confirm-list{ display:flex; flex-direction:column; gap:8px; }
+.confirm-item{ display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-soft); }
+.confirm-item .cm{ color:var(--primary); font-weight:700; }
+.gcal-btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:8px; border:1.5px solid var(--line); background:#fff; font-size:13.5px; font-weight:600; color:var(--ink); margin-top:14px; }
+.gcal-btn:hover{ border-color:var(--primary); }
+.gcal-confirm{ margin-top:12px; padding:12px 14px; background:var(--primary-wash); border-radius:8px; font-size:13px; color:var(--primary); font-weight:600; display:flex; gap:8px; align-items:center; }
+
+.passbook{ border:1.5px solid var(--primary); border-radius:14px; overflow:hidden; background:#fff; margin:26px 0; }
+.passbook-head{ background:var(--primary); color:#fff; padding:20px 26px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.passbook-head .ph-title{ font-size:18px; font-weight:700; }
+.passbook-head .ph-sub{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(255,255,255,0.7); margin-top:3px; }
+.passbook-body{ padding:8px 0; }
+.perf-edge{ height:8px; background:repeating-linear-gradient(to right, var(--paper) 0 6px, transparent 6px 12px); }
+
+.timeline{ padding:22px 26px; }
+.tl-item{ display:flex; gap:16px; padding-bottom:26px; position:relative; }
+.tl-item:last-child{ padding-bottom:0; }
+.tl-item::before{ content:''; position:absolute; left:13px; top:28px; bottom:0; width:1.5px; background:var(--line); }
+.tl-item:last-child::before{ display:none; }
+.tl-dot{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; z-index:1; }
+.tl-dot.done{ background:var(--primary); color:#fff; }
+.tl-dot.current{ background:var(--marigold); color:#241505; }
+.tl-dot.pending{ background:var(--paper); border:1.5px solid var(--line); color:var(--muted); }
+.tl-content{ flex:1; padding-top:2px; }
+.tl-content .tl-title{ font-weight:600; font-size:14.5px; color:var(--ink); }
+.tl-content .tl-date{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); margin-top:2px; }
+.tl-content .tl-desc{ font-size:13.5px; color:var(--ink-soft); margin-top:6px; }
+
+.task-list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.task-item{ display:flex; align-items:center; gap:10px; font-size:13.5px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; background:var(--paper-raised); }
+.task-item.checked{ background:var(--primary-wash); border-color:var(--primary); }
+.task-check{ width:16px; height:16px; border-radius:4px; border:1.5px solid var(--muted); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; }
+.task-item.checked .task-check{ background:var(--primary); border-color:var(--primary); color:#fff; }
+.task-item.checked span.tt{ text-decoration:line-through; color:var(--muted); }
+.task-due{ font-size:11px; color:var(--marigold); font-family:'IBM Plex Mono',monospace; margin-left:auto; flex-shrink:0; }
+
+.thread{ border:1px solid var(--line); border-radius:10px; background:#F1EEE5; padding:16px; max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+.bubble{ max-width:78%; padding:10px 13px; border-radius:11px; font-size:13.5px; line-height:1.45; }
+.bubble.them{ background:#fff; border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:3px; }
+.bubble.us{ background:var(--primary); color:#fff; align-self:flex-end; border-bottom-right-radius:3px; }
+.bubble.sys{ align-self:center; background:transparent; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:11px; text-align:center; }
+.bubble .bt{ font-size:10px; opacity:.65; margin-top:4px; }
+
+.integration-row{ display:flex; align-items:center; gap:12px; padding:13px 16px; border:1px solid var(--line); border-radius:8px; margin-bottom:10px; background:var(--paper-raised); }
+.integration-row .ir-icon{ width:34px; height:34px; border-radius:8px; background:var(--primary-wash); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.integration-row .ir-text{ flex:1; }
+.integration-row .ir-title{ font-size:13.5px; font-weight:600; }
+.integration-row .ir-sub{ font-size:12px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+
+.rating-row{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
+.rating-row:last-child{ border-bottom:none; }
+.stars{ display:flex; gap:5px; }
+.star{ width:26px; height:26px; cursor:pointer; color:var(--line); transition:color .1s; }
+.star.on{ color:var(--marigold); }
+
+.toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:13px 22px; border-radius:8px; font-size:14px; font-weight:500; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:200; display:flex; align-items:center; gap:10px; animation:toastin .25s ease; }
+@keyframes toastin{ from{ opacity:0; transform:translate(-50%,10px);} to{opacity:1; transform:translate(-50%,0);} }
+.pill-select{ display:flex; gap:8px; flex-wrap:wrap; }
+.pill-opt{ padding:9px 15px; border:1.5px solid var(--line); border-radius:100px; font-size:13.5px; font-weight:500; color:var(--ink-soft); }
+.pill-opt.on{ border-color:var(--primary); background:var(--primary); color:#fff; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.mut{ color:var(--muted); }
+.mb-8{margin-bottom:8px;} .mb-12{margin-bottom:12px;} .mb-16{margin-bottom:16px;} .mb-24{margin-bottom:24px;} .mb-32{margin-bottom:32px;}
+.mt-8{margin-top:8px;} .mt-12{margin-top:12px;} .mt-16{margin-top:16px;} .mt-24{margin-top:24px;} .mt-32{margin-top:32px;}
+.flex{ display:flex; } .items-center{ align-items:center; } .justify-between{ justify-content:space-between; } .gap-8{gap:8px;} .gap-12{gap:12px;} .gap-16{gap:16px;}
+.small{ font-size:13px; }
+.tiny{ font-size:11.5px; }
+.clickable-list-item{ padding:16px; border:1px solid var(--line); border-radius:8px; margin-bottom:10px; cursor:pointer; transition:border-color .15s, background .15s; background:var(--paper-raised); }
+.clickable-list-item:hover{ border-color:var(--primary); }
+.clickable-list-item.selected{ border-color:var(--primary); background:var(--primary-wash); }
+
+/* ---------- News-feed homepage ---------- */
+.news-hero{ padding:64px 0 40px; max-width:740px; }
+.news-hero h1{ font-size:clamp(34px,5vw,50px); font-weight:800; letter-spacing:-0.02em; color:var(--ink); line-height:1.1; }
+.news-hero .thought{ font-size:16.5px; color:var(--ink-soft); margin-top:20px; line-height:1.7; max-width:620px; }
+.pulse-strip{ display:flex; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin:40px 0 0; background:var(--paper-raised); }
+.pulse-strip .pulse-label{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.07em; color:var(--muted); padding:16px 22px; display:flex; align-items:center; border-right:1px solid var(--line); background:var(--line-soft); flex-shrink:0; }
+.pulse-strip .pulse-stat{ flex:1; padding:16px 22px; border-right:1px solid var(--line); }
+.pulse-strip .pulse-stat:last-child{ border-right:none; }
+.pulse-strip .ps-num{ font-size:21px; font-weight:800; color:var(--primary); }
+.pulse-strip .ps-label{ font-size:12px; color:var(--muted); margin-top:2px; }
+
+.story-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.story-card{ border:1px solid var(--line); border-radius:12px; padding:22px; background:var(--paper-raised); }
+.story-card .sc-headline{ font-size:15.5px; font-weight:700; color:var(--ink); line-height:1.4; margin-bottom:10px; }
+.story-card .sc-meta{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--marigold); font-weight:600; }
+
+.opp-module{ border:1.5px solid var(--primary); border-radius:12px; padding:26px; background:var(--primary-wash); }
+.opp-module .om-human{ font-size:14px; color:var(--ink-soft); margin-top:6px; }
+.opp-module .om-why{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.pp-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
+.pp-chip{ padding:8px 14px; border-radius:100px; border:1.5px solid var(--primary); background:#fff; color:var(--primary); font-size:13px; font-weight:600; }
+.pp-chip:hover{ background:var(--primary); color:#fff; }
+.pp-remaining{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-left:auto; }
+.pp-confirm{ margin-top:14px; padding:13px 16px; background:#fff; border:1.5px solid var(--primary); border-radius:9px; font-size:13.5px; color:var(--primary); font-weight:600; display:flex; align-items:center; gap:8px; }
+
+.response-window{ border:1px solid var(--line); border-radius:11px; padding:20px; background:var(--paper-raised); }
+.response-window .rw-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.response-window .rw-who{ font-weight:700; font-size:14.5px; }
+.response-window .rw-timer{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--marigold); background:var(--marigold-wash); padding:3px 9px; border-radius:100px; }
+.response-window .rw-nudge{ font-size:12px; color:var(--muted); margin-top:8px; }
+.response-window .rw-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.response-window .rw-status{ margin-top:10px; font-size:13px; font-weight:600; color:var(--primary); }
+
+.giving-year{ font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:700; color:var(--marigold); margin:20px 0 10px; }
+.giving-entry{ display:flex; gap:14px; padding:13px 0; border-bottom:1px solid var(--line-soft); }
+.giving-entry:last-child{ border-bottom:none; }
+.giving-dot{ width:7px; height:7px; border-radius:50%; background:var(--primary); margin-top:7px; flex-shrink:0; }
+.giving-entry .ge-text{ font-size:14px; color:var(--ink); line-height:1.5; }
+.giving-entry .ge-meta{ font-size:12px; color:var(--muted); margin-top:3px; font-family:'IBM Plex Mono',monospace; }
+
+.goodthings-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.goodthings-card{ padding:18px; border-radius:10px; background:var(--line-soft); font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+.human-line{ font-size:14.5px; color:var(--ink-soft); font-style:normal; }
+.human-line strong{ color:var(--ink); font-weight:600; }
+
+@media (max-width: 860px){
+  .story-grid{ grid-template-columns:1fr; }
+  .goodthings-strip{ grid-template-columns:1fr 1fr; }
+  .pulse-strip{ flex-direction:column; }
+  .pulse-strip .pulse-label{ border-right:none; border-bottom:1px solid var(--line); }
+  .pulse-strip .pulse-stat{ border-right:none; border-bottom:1px solid var(--line); }
+  .split-cards{ grid-template-columns:1fr; }
+  .stat-strip{ flex-wrap:wrap; }
+  .stat-strip .stat{ flex:1 1 50%; border-bottom:1px solid var(--line); }
+  .flow-steps{ grid-template-columns:1fr 1fr; gap:20px; }
+  .two-col{ grid-template-columns:1fr; }
+  .ledger-grid{ grid-template-columns:1fr 1fr; }
+  .grid-2, .grid-3{ grid-template-columns:1fr; }
+  .trust-grid{ grid-template-columns:1fr; }
+  .nav-links{ display:none; }
+  .stage-stepper .sl{ display:none; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* =========================================================
+   SKILLSETU PROTOTYPE — mock data + SPA render engine
+   ========================================================= */
+
+const VOLUNTEERS = [
+  { id:'v1', name:'Naveen Prashanth', initials:'NP', role:'Senior Marketing Manager', company:'Consumer goods, 12 yrs', location:'Bengaluru', verified:true,
+    skills:[{name:'Digital Marketing',lvl:'Expert'},{name:'Analytics',lvl:'Expert'},{name:'Presentations',lvl:'Advanced'},{name:'MS Excel',lvl:'Advanced'},{name:'Brand Strategy',lvl:'Expert'}],
+    availability:'Weekends, 2–3 hrs', interests:['Education','Livelihoods'],
+    bio:"I've worked in marketing for 12 years. I'm strong at Excel, analytics, presentations and digital marketing.",
+    hoursGiven:18, projectsCompleted:5, orgsHelped:4, rating:4.9,
+    trainingHistory:true,
+    givingHistoryEntries:[
+      { skill:'Digital Marketing', org:'Udaan Women\'s Collective', hours:8, date:'Mar 2026' },
+      { skill:'MS Excel', org:'Deepalaya Learning Trust', hours:4, date:'Jan 2026' },
+      { skill:'Brand Strategy', org:'Punarnava Environment Collective', hours:6, date:'Nov 2025' },
+    ] },
+  { id:'v2', name:'Ritika Chandran', initials:'RC', role:'Product Designer', company:'FinTech, 8 yrs', location:'Chennai', verified:true,
+    skills:[{name:'UI/UX Design',lvl:'Expert'},{name:'Figma',lvl:'Expert'},{name:'Design Systems',lvl:'Advanced'},{name:'User Research',lvl:'Advanced'}],
+    availability:'Weekday evenings', interests:['Women\'s Empowerment','Healthcare'],
+    bio:"8 years in product design, mostly fintech apps. Comfortable running design workshops and building from scratch.",
+    hoursGiven:12, projectsCompleted:3, orgsHelped:3, rating:5.0 },
+  { id:'v3', name:'Arjun Mehta', initials:'AM', role:'Finance Controller', company:'Manufacturing, 15 yrs', location:'Pune', verified:true,
+    skills:[{name:'Financial Modelling',lvl:'Expert'},{name:'Budgeting',lvl:'Expert'},{name:'MS Excel',lvl:'Expert'},{name:'Compliance',lvl:'Advanced'}],
+    availability:'Weekends', interests:['Livelihoods','Environment'],
+    bio:"15 years in finance leadership roles. I can help with budgeting, financial models and cost control for small teams.",
+    hoursGiven:26, projectsCompleted:7, orgsHelped:5, rating:4.8,
+    givingHistoryEntries:[
+      { skill:'Financial Modelling', org:'Deepalaya Learning Trust', hours:6, date:'Feb 2026' },
+      { skill:'Budgeting', org:'Grameen Sahayata Sangh', hours:5, date:'Oct 2025' },
+    ] },
+  { id:'v4', name:'Sanya Kapoor', initials:'SK', role:'HR Business Partner', company:'IT Services, 10 yrs', location:'Gurugram', verified:true,
+    skills:[{name:'HR Process Design',lvl:'Expert'},{name:'Hiring',lvl:'Advanced'},{name:'Policy Writing',lvl:'Advanced'},{name:'Facilitation',lvl:'Advanced'}],
+    availability:'Weekends, flexible', interests:['Education','Women\'s Empowerment'],
+    bio:"10 years building HR processes for fast-growing teams. Can help nonprofits set up hiring and people processes.",
+    hoursGiven:9, projectsCompleted:2, orgsHelped:2, rating:4.7 },
+  { id:'v5', name:'Karthik Subramaniam', initials:'KS', role:'Data Analyst', company:'E-commerce, 6 yrs', location:'Chennai', verified:true,
+    skills:[{name:'Data Analysis',lvl:'Expert'},{name:'MS Excel',lvl:'Expert'},{name:'SQL',lvl:'Advanced'},{name:'Dashboards',lvl:'Advanced'}],
+    availability:'Weekday evenings, weekends', interests:['Healthcare','Environment'],
+    bio:"6 years turning messy data into decisions. Strong in Excel, SQL and building simple dashboards for small teams.",
+    hoursGiven:14, projectsCompleted:4, orgsHelped:3, rating:4.9 },
+  { id:'v6', name:'Divya Ramaswamy', initials:'DR', role:'Legal Counsel', company:'Corporate law, 9 yrs', location:'Mumbai', verified:true,
+    skills:[{name:'Contracts',lvl:'Expert'},{name:'Compliance',lvl:'Expert'},{name:'Governance',lvl:'Advanced'}],
+    availability:'Weekends', interests:['Women\'s Empowerment','Education'],
+    bio:"9 years as in-house counsel. I help small organisations get their contracts and governance basics right.",
+    hoursGiven:7, projectsCompleted:2, orgsHelped:2, rating:5.0 },
+  { id:'v7', name:'Farhan Ali Khan', initials:'FK', role:'Software Engineering Lead', company:'SaaS, 11 yrs', location:'Hyderabad', verified:true,
+    skills:[{name:'Web Development',lvl:'Expert'},{name:'Technical Architecture',lvl:'Expert'},{name:'Product Strategy',lvl:'Advanced'}],
+    availability:'Weekends', interests:['Education','Livelihoods'],
+    bio:"11 years building products. I can help nonprofits fix or rebuild their websites and basic tech infrastructure.",
+    hoursGiven:21, projectsCompleted:5, orgsHelped:4, rating:4.8 },
+  { id:'v8', name:'Meera Iyer', initials:'MI', role:'Growth & Social Media Lead', company:'D2C brand, 7 yrs', location:'Bengaluru', verified:true,
+    skills:[{name:'Social Media Strategy',lvl:'Expert'},{name:'Content Planning',lvl:'Advanced'},{name:'Analytics',lvl:'Advanced'}],
+    availability:'Weekday evenings', interests:['Environment','Healthcare'],
+    bio:"7 years running social and growth for a D2C brand. Happy to build a social media playbook for a small team.",
+    hoursGiven:11, projectsCompleted:3, orgsHelped:3, rating:4.9 },
+  { id:'v9', name:'Rohan Deshpande', initials:'RD', role:'Management Consultant', company:'Strategy consulting, 9 yrs', location:'Mumbai', verified:true,
+    skills:[{name:'Fundraising Strategy',lvl:'Expert'},{name:'Presentations',lvl:'Expert'},{name:'Financial Modelling',lvl:'Advanced'}],
+    availability:'Weekends', interests:['Livelihoods','Education'],
+    bio:"9 years in strategy consulting. I've built fundraising decks and pitch narratives for early-stage teams.",
+    hoursGiven:16, projectsCompleted:4, orgsHelped:4, rating:5.0,
+    givingHistoryEntries:[
+      { skill:'Fundraising Strategy', org:'Grameen Sahayata Sangh', hours:6, date:'Dec 2025' },
+      { skill:'Presentations', org:'Arogya Community Health Foundation', hours:4, date:'Sep 2025' },
+    ] },
+  { id:'v10', name:'Priya Natarajan', initials:'PN', role:'Brand & Communications Lead', company:'Media, 13 yrs', location:'Chennai', verified:true,
+    skills:[{name:'Brand Strategy',lvl:'Expert'},{name:'Presentations',lvl:'Expert'},{name:'Digital Marketing',lvl:'Advanced'},{name:'MS Excel',lvl:'Intermediate'}],
+    availability:'Weekends, 2 hrs', interests:['Education','Women\'s Empowerment'],
+    bio:"13 years in brand and communications. I enjoy teaching — comfortable running hands-on training sessions.",
+    hoursGiven:19, projectsCompleted:5, orgsHelped:4, rating:4.9, trainingHistory:true },
+];
+
+const NONPROFITS = [
+  { id:'n1', name:'Deepalaya Learning Trust', cause:'Education', location:'Chennai, TN', verified:true, contact:'Lakshmi Venkat, Programme Director', regNo:'12A/80G — CSR00034521',
+    description:'Runs after-school learning centres for children from low-income communities across 6 centres in Chennai.' },
+  { id:'n2', name:'Grameen Sahayata Sangh', cause:'Livelihoods', location:'Pune, MH', verified:true, contact:'Manoj Kulkarni, Executive Director', regNo:'12A/80G — CSR00028147',
+    description:'Supports rural self-help groups with skills training and market access for handicraft and agri products.' },
+  { id:'n3', name:'Punarnava Environment Collective', cause:'Environment', location:'Bengaluru, KA', verified:true, contact:'Ananya Rao, Founder', regNo:'12A/80G — CSR00041098',
+    description:'Works on urban lake restoration and community-led waste management programmes.' },
+  { id:'n4', name:'Arogya Community Health Foundation', cause:'Healthcare', location:'Hyderabad, TG', verified:true, contact:'Dr. Suresh Reddy, Trustee', regNo:'12A/80G — CSR00019273',
+    description:'Runs mobile health camps and a maternal health awareness programme in peri-urban Hyderabad.' },
+  { id:'n5', name:'Udaan Women\'s Collective', cause:'Women\'s Empowerment', location:'Gurugram, HR', verified:true, contact:'Neha Sharma, Programme Lead', regNo:'12A/80G — CSR00037654',
+    description:'Trains women from underserved communities in vocational skills and helps them access markets and credit.' },
+];
+
+const NEEDS = [
+  { id:'q1', nonprofitId:'n1', raw:"We need someone to train our five-person team on Excel. They are beginners and we'd like a two-hour session, ideally on a Saturday.",
+    structured:{ skill:'MS Excel', type:'Skills Training', duration:'2 hours', participants:'5 team members (beginner)', format:'Single session, online', sessions:1 }, status:'open' },
+  { id:'q2', nonprofitId:'n2', raw:"Our fundraising deck is outdated and doesn't tell our story well. We need help rebuilding it before our donor meeting next month.",
+    structured:{ skill:'Fundraising Strategy / Presentations', type:'Deliverable — Deck Rebuild', duration:'~6 hours across 2 sessions', participants:'Programme lead + 1 coordinator', format:'2 working sessions', sessions:2 }, status:'open' },
+  { id:'q3', nonprofitId:'n3', raw:"Our website is 4 years old, looks broken on phones, and we can't update it ourselves. We need it fixed and simplified.",
+    structured:{ skill:'Web Development', type:'Deliverable — Website Rebuild', duration:'~10 hours across 3 sessions', participants:'Founder + comms volunteer', format:'3 working sessions', sessions:3 }, status:'open' },
+  { id:'q4', nonprofitId:'n4', raw:"We collect patient data from our health camps on paper. We'd like someone to help us analyse a year's data and show us what it's telling us.",
+    structured:{ skill:'Data Analysis', type:'Deliverable — Data Analysis', duration:'~5 hours across 2 sessions', participants:'Programme coordinator', format:'2 working sessions', sessions:2 }, status:'open' },
+  { id:'q5', nonprofitId:'n5', raw:"We want to teach our women's collective digital marketing basics over a few weekends so they can sell their products online themselves.",
+    structured:{ skill:'Digital Marketing', type:'Skills Training — Multi-session', duration:'4 sessions of 2 hrs, Saturdays', participants:'12 collective members', format:'4-session course', sessions:4 }, status:'open' },
+  { id:'q6', nonprofitId:'n1', raw:"We need a financial model to show a foundation what our costs look like if we expand to 3 more centres.",
+    structured:{ skill:'Financial Modelling', type:'Deliverable — Financial Model', duration:'~6 hours across 2 sessions', participants:'Programme Director', format:'2 working sessions', sessions:2 }, status:'open' },
+  { id:'q7', nonprofitId:'n2', raw:"We're hiring our first 3 employees and have no idea how to structure offer letters, interviews or onboarding.",
+    structured:{ skill:'HR Process Design', type:'Deliverable — HR Setup', duration:'~4 hours across 2 sessions', participants:'Executive Director', format:'2 working sessions', sessions:2 }, status:'open' },
+  { id:'q8', nonprofitId:'n3', raw:"We want to grow our Instagram and get more volunteers to our lake clean-up drives, but no one on our team understands social media strategy.",
+    structured:{ skill:'Social Media Strategy', type:'Deliverable — Strategy Playbook', duration:'~4 hours across 2 sessions', participants:'Comms volunteer', format:'2 working sessions', sessions:2 }, status:'open' },
+  { id:'q9', nonprofitId:'n4', raw:"Our partnership agreements with hospitals need a legal review before we sign the next one.",
+    structured:{ skill:'Contracts / Compliance', type:'Deliverable — Legal Review', duration:'~3 hours across 1–2 sessions', participants:'Trustee', format:'1–2 sessions', sessions:2 }, status:'open' },
+  { id:'q10', nonprofitId:'n5', raw:"We need to redo our brand — name, logo feel and messaging haven't kept up with how much we've grown.",
+    structured:{ skill:'Brand Strategy', type:'Deliverable — Brand Refresh', duration:'~8 hours across 3 sessions', participants:'Programme Lead + Founder', format:'3 working sessions', sessions:3 }, status:'open' },
+];
+
+const PULSE = { helped:327, hours:1482, projects:86 };
+
+const STORIES = [
+  { headline:'A designer in Chennai helped a women\'s collective rethink its brand.', meta:'2 hours · Brand strategy' },
+  { headline:'An Excel expert helped a nonprofit team make sense of three years of data.', meta:'4 hours · Analytics' },
+  { headline:'A finance professional helped a small nonprofit build a model for its next phase of growth.', meta:'3 sessions · Financial planning' },
+  { headline:'A lawyer helped a health foundation get its hospital partnerships in order.', meta:'3 hours · Legal review' },
+  { headline:'A product designer ran a hands-on workshop for a livelihoods nonprofit\'s team.', meta:'2 hours · Design systems' },
+];
+
+const GOOD_THINGS = [
+  "A group of working professionals in Mumbai have been mentoring first-generation college students through their final year placements.",
+  "Residents in a Bengaluru neighbourhood spent their Sunday restoring a public park that had gone unused for years.",
+  "A team of doctors volunteered a weekend to run a free health camp in a village outside Hyderabad.",
+  "A handful of engineers helped a government school in Pune set up its first computer lab.",
+];
+
+function getGivingHistory(v){
+  if(v.givingHistoryEntries) return v.givingHistoryEntries;
+  const n = v.projectsCompleted || 1;
+  const orgs = NONPROFITS.map(o=>o.name);
+  return Array.from({length:Math.min(n,3)}, (_,i)=>({
+    skill: v.skills[i % v.skills.length].name,
+    org: orgs[i % orgs.length],
+    hours: 3 + (i*2),
+    date: ['Feb 2026','Nov 2025','Aug 2025'][i] || '2025',
+  }));
+}
+
+// Ranking stays under the hood — only qualitative reasons are ever shown in the UI
+const MATCH_REASONS = {
+  q1: [
+    { vid:'v1', score:96, reasons:["12 years of hands-on Excel and analytics experience","Has previously run beginner-level training sessions","Available on Saturdays — matches the requested slot","Based in Bengaluru, comfortable running remote sessions"] },
+    { vid:'v3', score:81, reasons:["Excel is a core strength from 15 years in finance","Weekend availability matches the request","No prior record of training beginner groups specifically"] },
+    { vid:'v5', score:74, reasons:["Strong Excel skills from a data analysis background","Available weekday evenings and weekends","No prior record of running group training sessions"] },
+  ]
+};
+function defaultMatchesFor(need){
+  const key = need.structured.skill.toLowerCase();
+  const scored = VOLUNTEERS.map(v=>{
+    let score = 40 + Math.round(Math.random()*8);
+    const hit = v.skills.find(s=>key.includes(s.name.toLowerCase().split(' ')[0]) || s.name.toLowerCase().includes(key.split(' ')[0]) || key.includes(s.name.toLowerCase()));
+    if(hit){ score += 38; }
+    if(v.interests.some(i=>i.toLowerCase().includes(NONPROFITS.find(n=>n.id===need.nonprofitId).cause.toLowerCase().slice(0,5)))) score += 6;
+    return { vid:v.id, score:Math.min(score,97) };
+  }).sort((a,b)=>b.score-a.score).slice(0,3);
+  return scored.map((s,i)=>({ vid:s.vid, score:s.score, reasons: buildGenericReasons(VOLUNTEERS.find(v=>v.id===s.vid), need, i===0) }));
+}
+function buildGenericReasons(v, need, isBest){
+  const r = [];
+  const matchedSkill = v.skills.find(s=> need.structured.skill.toLowerCase().includes(s.name.toLowerCase().split(' ')[0]));
+  if(matchedSkill) r.push(`Skilled in ${matchedSkill.name} (${matchedSkill.lvl.toLowerCase()} level)`);
+  r.push(`${v.company.split(',')[1]?.trim() || 'Experienced'} professional — background fits this kind of request`);
+  r.push(`Availability: ${v.availability}`);
+  if(!isBest) r.push('A relevant fit, though a step behind the top match on session experience');
+  return r;
+}
+function getMatches(need){ return MATCH_REASONS[need.id] || defaultMatchesFor(need); }
+
+/* ---------------- App State ---------------- */
+const state = {
+  page:'landing',
+  params:{},
+  onboardingBio:"I've worked in marketing for 12 years. I'm strong at Excel, analytics, presentations and digital marketing.",
+  onboardingExtracted:false,
+  onboardingExtracting:false,
+  onboardingStep:'bio', // bio -> verify -> review
+  verify:{ mobile:'98450 12345', mobileSent:false, mobileVerified:false, otp:'', email:'naveen@brandworks.co.in', emailVerifying:false, emailVerified:false },
+  npVerify:{ regChecking:false, regVerified:false, contactChecking:false, contactVerified:false },
+  newVolunteer:null,
+  needDraft:{ nonprofitId:'n1', raw:"We need someone to train our five-person team on Excel. They are beginners and we'd like a two-hour session, ideally on a Saturday." },
+  needExtracted:false,
+  needExtracting:false,
+  selectedMatchVid:null,
+  fallbackTriggered:false,
+  engagements:{},
+  activeEngagementNeedId:null,
+  gcalConfirmed:{},
+  priorityPoints:{ total:100, allocations:{} }, // needId -> points committed
+  pending:null, // {needId, volId, triedVolIds:[], volStatus, npStatus, note}
+  feedbackStep:'volunteer',
+  feedbackDraft:{ quality:0, communication:0, reliability:0, completed:true },
+  reputationVid:'v1',
+};
+
+function go(page, params={}){ state.page = page; state.params = params; render(); window.scrollTo({top:0, behavior:'instant'}); }
+function toast(msg){
+  const t = document.createElement('div'); t.className='toast'; t.innerHTML = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2600);
+}
+function icon(name){
+  const map = { check:'✓', cal:'📅', wa:'💬', bell:'🔔', doc:'📄', shield:'🛡️', clock:'⏱', mobile:'📱', mail:'✉️', building:'🏛' };
+  return map[name] || '•';
+}
+
+/* ---------------- Engagement builder ---------------- */
+function nextSaturday(offsetWeeks){
+  const d = new Date();
+  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7) + offsetWeeks*7);
+  return d;
+}
+function fmtDate(d){ return d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' }); }
+
+function buildEngagement(need, volunteer){
+  const nonprofit = NONPROFITS.find(n=>n.id===need.nonprofitId);
+  const sessionCount = need.structured.sessions;
+  const sessionTitles = {
+    1: ['Session'],
+    2: ['Kickoff & scoping','Delivery & handover'],
+    3: ['Kickoff & scoping','Build / working session','Review & handover'],
+    4: ['Introduction','Core Skills','Applied Practice','Practical Project'],
+  }[sessionCount] || Array.from({length:sessionCount}, (_,i)=>`Session ${i+1}`);
+
+  const sessions = sessionTitles.map((title,i)=>{
+    const d = nextSaturday(i);
+    return {
+      id:'s'+(i+1), title, dateObj:d, date:fmtDate(d), time:'10:00 – 12:00 IST', status: i===0 ? 'upcoming' : 'scheduled',
+      volTasks:[ {t:'Confirm availability for the slot', done:i>0}, {t: i===0 ? 'Review the need brief' : 'Prepare materials for this session', done:false, dueDaysBefore:2} ],
+      npTasks:[ {t:'Share team background with volunteer', done:i>0}, {t:'Set up the room / video link', done:false, dueDaysBefore:2} ],
+    };
+  });
+
+  return {
+    needId: need.id, nonprofit, volunteer, need, sessions,
+    status:'scheduled',
+    calendarCreated:true,
+    reminders:[
+      `Volunteer reminded 24 hrs before ${sessions[0].title}`,
+      `${nonprofit.name} reminded to prepare participant list`,
+    ],
+    comms:[
+      { from:'system', text:`SkillSetu has connected you both for "${need.structured.type}". This thread is only for this engagement.` , t:'now'},
+      { from:'nonprofit', text:`Hi ${volunteer.name.split(' ')[0]}, thank you so much for offering your time! Looking forward to ${sessions[0].date}.`, t:'2m ago' },
+      { from:'volunteer', text:`Happy to help, ${nonprofit.contact.split(',')[0]}! Could you share the group's current comfort level beforehand?`, t:'just now' },
+    ],
+    currentSessionIndex:0,
+    completed:false,
+    feedback:{ volunteerToNonprofit:null, nonprofitToVolunteer:null },
+  };
+}
+
+/* ---------------- Pending match / response windows ---------------- */
+function initPending(needId, volId){
+  state.pending = { needId, volId, triedVolIds:[volId], volStatus:'pending', npStatus:'pending', note:null };
+}
+function pendingNextCandidate(){
+  const need = NEEDS.find(q=>q.id===state.pending.needId);
+  const matches = getMatches(need);
+  const next = matches.find(m=>!state.pending.triedVolIds.includes(m.vid));
+  return next ? VOLUNTEERS.find(v=>v.id===next.vid) : null;
+}
+function pendingReassignVolunteer(reasonText){
+  const need = NEEDS.find(q=>q.id===state.pending.needId);
+  const nonprofit = NONPROFITS.find(n=>n.id===need.nonprofitId);
+  const oldVol = VOLUNTEERS.find(v=>v.id===state.pending.volId) || state.newVolunteer;
+  const nextVol = pendingNextCandidate();
+  if(nextVol){
+    state.pending.volId = nextVol.id;
+    state.pending.triedVolIds.push(nextVol.id);
+    state.pending.volStatus = 'pending';
+    state.pending.npStatus = 'pending';
+    state.pending.note = `${reasonText} We've passed this opportunity to ${nextVol.name}.`;
+    toast(`Opportunity passed to ${nextVol.name.split(' ')[0]} ✓`);
+  } else {
+    state.pending.note = `${reasonText} We're still looking for another suitable match for ${nonprofit.name}.`;
+    toast('No further matches available right now');
+  }
+  render();
+}
+function pendingReleaseVolunteerToOther(){
+  const need = NEEDS.find(q=>q.id===state.pending.needId);
+  const vol = VOLUNTEERS.find(v=>v.id===state.pending.volId) || state.newVolunteer;
+  const alt = NEEDS.find(q=>q.id!==need.id && q.structured.skill===need.structured.skill) || NEEDS.find(q=>q.id!==need.id);
+  state.pending.npStatus = 'expired';
+  state.pending.altNeed = alt;
+  state.pending.note = `This nonprofit didn't respond in time — we've found ${vol.name.split(' ')[0]} another opportunity that could use the same skills.`;
+  toast('Volunteer offered a new opportunity ✓');
+  render();
+}
+function pendingCheckBothReady(){
+  if(state.pending.volStatus==='interested' && state.pending.npStatus==='confirmed'){
+    const need = NEEDS.find(q=>q.id===state.pending.needId);
+    const volunteer = (state.newVolunteer && state.newVolunteer.id===state.pending.volId) ? state.newVolunteer : VOLUNTEERS.find(v=>v.id===state.pending.volId);
+    const eng = buildEngagement(need, volunteer);
+    state.engagements[need.id] = eng;
+    state.activeEngagementNeedId = need.id;
+    state.gcalConfirmed = {};
+    toast('Both sides confirmed — creating calendar invites ✓');
+    go('schedule', {needId: need.id});
+    return true;
+  }
+  return false;
+}
+
+/* ---------------- Priority Points ---------------- */
+function ppRemaining(){ return state.priorityPoints.total - Object.values(state.priorityPoints.allocations).reduce((a,b)=>a+b,0); }
+function ppAllocate(needId, points){
+  if(state.priorityPoints.allocations[needId]) return; // already committed to this one
+  if(points > ppRemaining()) points = ppRemaining();
+  state.priorityPoints.allocations[needId] = points;
+  render();
+  toast('You chose this. We\'ll help make it happen. ✓');
+}
+
+/* ---------------- Renderers ---------------- */
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    ${renderNav()}
+    <div class="page">${renderPage()}</div>
+    ${renderFooter()}
+  `;
+  attachHandlers();
+}
+
+function renderNav(){
+  const links = [ ['landing','Home'], ['browse-volunteers','Volunteers'], ['browse-needs','Needs'] ];
+  return `
+  <div class="topnav">
+    <div class="topnav-inner">
+      <div class="brand" style="cursor:pointer" data-nav="landing"><div class="brand-mark">SS</div> SkillSetu</div>
+      <div class="nav-links">
+        ${links.map(([p,l])=>`<button data-nav="${p}" class="${state.page===p?'active':''}">${l}</button>`).join('')}
+        <button data-nav="volunteer-onboard">Give my skills</button>
+        <button data-nav="nonprofit-onboard">Post a need</button>
+        <button class="nav-cta" data-nav="reputation" data-params='{"vid":"v1"}'>My profile</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFooter(){
+  return `<footer><div class="container">
+    <div class="footer-note">SKILLSETU — DIGITAL INFRASTRUCTURE FOR SKILLED GIVING · PROTOTYPE BUILD</div>
+    <div class="footer-note">NO PAYMENTS · NO BIDDING · ONE NONPROFIT + ONE VOLUNTEER + ONE NEED</div>
+  </div></footer>`;
+}
+
+function renderPage(){
+  switch(state.page){
+    case 'landing': return renderLanding();
+    case 'browse-volunteers': return renderBrowseVolunteers();
+    case 'browse-needs': return renderBrowseNeeds();
+    case 'volunteer-onboard': return renderVolunteerOnboard();
+    case 'volunteer-profile': return renderVolunteerProfile();
+    case 'nonprofit-onboard': return renderNonprofitOnboard();
+    case 'create-need': return renderCreateNeed();
+    case 'matching': return renderMatching();
+    case 'pending-match': return renderPendingMatch();
+    case 'schedule': return renderSchedule();
+    case 'engagement': return renderEngagement();
+    case 'feedback': return renderFeedback();
+    case 'reputation': return renderReputation();
+    default: return renderLanding();
+  }
+}
+
+/* Reusable "Someone needs you" opportunity module with Priority Points */
+function renderOpportunityModule(need, opts={}){
+  const nonprofit = NONPROFITS.find(n=>n.id===need.nonprofitId);
+  const npFirst = nonprofit.contact.split(',')[0];
+  const whyTags = [need.structured.skill, ...(need.structured.skill.includes('/') ? [] : [])].join(',').split(/[\/,]/).map(s=>s.trim()).filter(Boolean);
+  const allocated = state.priorityPoints.allocations[need.id];
+  const remaining = ppRemaining();
+  return `<div class="opp-module">
+    <div class="eyebrow warm mb-8">${opts.label || 'SOMEONE NEEDS YOU'}</div>
+    <div class="human-line" style="font-size:16px;"><strong>${npFirst}</strong> (${nonprofit.name}) needs help with ${need.structured.skill.toLowerCase()}.</div>
+    <div class="om-human">${need.raw}</div>
+    <div class="eyebrow mut mt-16 mb-8" style="font-size:10.5px;">WHY YOU</div>
+    <div class="om-why">${whyTags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+    ${allocated ? `
+      <div class="pp-confirm">✓ You chose this — committed ${allocated} Priority Points. We'll help make it happen.</div>
+    ` : `
+      <div class="small mut mt-8">Use Priority Points to signal your strongest interest. This isn't money — just a way to say "I really want this."</div>
+      <div class="pp-row">
+        <span class="small" style="font-weight:600;">How much do you want this?</span>
+        <button class="pp-chip" data-pp-allocate="${need.id}:10">10</button>
+        <button class="pp-chip" data-pp-allocate="${need.id}:25">25</button>
+        <button class="pp-chip" data-pp-allocate="${need.id}:50">50</button>
+        <span class="pp-remaining">${remaining} points left</span>
+      </div>
+    `}
+    <button class="btn btn-outline btn-sm mt-16" data-nav="matching" data-params='{"needId":"${need.id}"}'>See full opportunity →</button>
+  </div>`;
+}
+
+/* Reusable stage stepper for the core journey */
+function renderStageStepper(current){
+  const stages = ['Match','Schedule','Prepare','Engage','Feedback'];
+  const idx = stages.indexOf(current);
+  return `<div class="stage-stepper">
+    ${stages.map((s,i)=>{
+      const cls = i<idx ? 'done' : i===idx ? 'current' : 'pending';
+      const mark = i<idx ? '✓' : (i+1);
+      const row = `<div class="stage-item"><div class="sd ${cls}">${mark}</div><span class="sl ${i<=idx?'on':''}">${s}</span></div>`;
+      return i < stages.length-1 ? row + `<div class="stage-connector"></div>` : row;
+    }).join('')}
+  </div>`;
+}
+
+/* ---- Landing ---- */
+function renderLanding(){
+  const featuredNeed = NEEDS.find(q=>q.id==='q5'); // digital marketing for Udaan Women's Collective
+  const featuredNp = NONPROFITS.find(n=>n.id===featuredNeed.nonprofitId);
+  return `
+  <div class="container">
+    <div class="news-hero">
+      <h1>Today, people helped.</h1>
+      <p class="thought">There are people everywhere who know something useful. There are people everywhere who need something. And every day, some of them find each other.</p>
+    </div>
+
+    <div class="pulse-strip">
+      <div class="pulse-label">TODAY ON<br>SKILLSETU</div>
+      <div class="pulse-stat"><div class="ps-num">${PULSE.helped}</div><div class="ps-label">people helped someone</div></div>
+      <div class="pulse-stat"><div class="ps-num">${PULSE.hours.toLocaleString('en-IN')}</div><div class="ps-label">hours given</div></div>
+      <div class="pulse-stat"><div class="ps-num">${PULSE.projects}</div><div class="ps-label">projects moved forward</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div><h2>From the network</h2><p>A few things that happened recently.</p></div></div>
+      <div class="story-grid">
+        ${STORIES.map(s=>`<div class="story-card"><div class="sc-headline">${s.headline}</div><div class="sc-meta">${s.meta}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <div class="section-head"><div><h2>Someone needs what you know</h2><p>One real opportunity from the network right now.</p></div></div>
+      ${renderOpportunityModule(featuredNeed, { label:'SOMEONE NEEDS WHAT YOU KNOW' })}
+    </div>
+
+    <div class="section" style="text-align:center; padding:48px 24px; background:var(--paper-raised); border:1px solid var(--line); border-radius:14px; margin:0 24px 0;">
+      <h2 style="margin-bottom:10px;">You probably know something someone needs.</h2>
+      <p class="mut mb-24" style="max-width:480px; margin:0 auto 24px;">No payments, no bidding — just one nonprofit, one volunteer, one need at a time.</p>
+      <div class="flex gap-16" style="justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-accent" data-nav="volunteer-onboard">Give my skills →</button>
+        <button class="btn btn-outline" data-nav="nonprofit-onboard">Post a need →</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div><h2 style="font-size:16px; font-family:'IBM Plex Mono',monospace; letter-spacing:.04em; color:var(--muted); text-transform:uppercase;">Good things happening beyond SkillSetu</h2></div></div>
+      <div class="goodthings-strip">
+        ${GOOD_THINGS.map(g=>`<div class="goodthings-card">${g}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---- Browse volunteers / needs ---- */
+function renderBrowseVolunteers(){
+  return `<div class="container">
+    <div class="page-head">
+      <div class="eyebrow">THE NETWORK</div>
+      <h1>Verified professionals</h1>
+      <p>Experienced people who've offered their time. Not students, not a resume board — a network of specific, verified skills.</p>
+    </div>
+    <div class="grid-3 mt-32">
+      ${VOLUNTEERS.map(v=>`
+        <div class="card" style="cursor:pointer" data-nav="volunteer-profile" data-params='{"vid":"${v.id}"}'>
+          <div class="flex items-center gap-12 mb-16">
+            <div class="avatar" style="width:46px;height:46px;font-size:16px;">${v.initials}</div>
+            <div><div style="font-weight:600;">${v.name}</div><div class="tiny mut">${v.role}</div></div>
+          </div>
+          <div class="mb-12">${v.skills.slice(0,3).map(s=>`<span class="skill-tag"><span class="lvl"></span>${s.name}</span>`).join('')}</div>
+          <div class="flex justify-between items-center">
+            <span class="badge badge-verified">${icon('shield')} Verified</span>
+            <span class="tiny mut">${v.location}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderBrowseNeeds(){
+  return `<div class="container">
+    <div class="page-head">
+      <div class="eyebrow">THE NETWORK</div>
+      <h1>Open needs</h1>
+      <p>Requests from verified nonprofits, structured by SkillSetu's matching layer.</p>
+    </div>
+    <div class="mt-32">
+      ${NEEDS.map(q=>{
+        const np = NONPROFITS.find(n=>n.id===q.nonprofitId);
+        const npFirst = np.contact.split(',')[0];
+        const allocated = state.priorityPoints.allocations[q.id];
+        return `<div class="clickable-list-item" data-nav="matching" data-params='{"needId":"${q.id}"}'>
+          <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-12"><span class="badge badge-neutral">${np.cause}</span><span style="font-weight:600;">${np.name}</span></div>
+            <span class="btn btn-outline btn-sm">View match →</span>
+          </div>
+          <div class="human-line mb-8"><strong>${npFirst}</strong> is looking for help with ${q.structured.skill.toLowerCase()}.</div>
+          <div class="small mut mb-12">${q.structured.type} · ${q.structured.duration}</div>
+          <div class="small mb-12" style="color:var(--ink-soft)">"${q.raw}"</div>
+          ${allocated ? `<div class="pp-confirm" style="padding:9px 12px;">✓ You chose this — ${allocated} Priority Points committed.</div>` : `
+          <div class="pp-row" style="margin-top:4px;">
+            <span class="tiny mut">Want this one?</span>
+            <button class="pp-chip" data-pp-allocate="${q.id}:10">10 pts</button>
+            <button class="pp-chip" data-pp-allocate="${q.id}:25">25 pts</button>
+            <button class="pp-chip" data-pp-allocate="${q.id}:50">50 pts</button>
+          </div>`}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ---- Volunteer onboarding (bio -> verify -> review) ---- */
+function extractSkillsFromBio(bio){
+  const catalog = ['excel','analytics','presentations','digital marketing','marketing','design','figma','finance','financial model','budgeting','data analysis','sql','hr','hiring','legal','contracts','compliance','web development','social media','brand','fundraising'];
+  const found = [];
+  const lower = bio.toLowerCase();
+  catalog.forEach(k=>{ if(lower.includes(k) && !found.some(f=>f.toLowerCase().includes(k))) found.push(k.replace(/\b\w/g, c=>c.toUpperCase())); });
+  const yearsMatch = bio.match(/(\d+)\s*year/i);
+  const years = yearsMatch ? yearsMatch[1] : '—';
+  return {
+    skills: found.length? found.slice(0,6) : ['Generalist'],
+    experience: years + (years!=='—' ? ' years' : ''),
+    seniority: (parseInt(years)||0) >= 10 ? 'Senior / Leadership level' : (parseInt(years)||0) >= 5 ? 'Mid-senior level' : 'Early-mid career',
+  };
+}
+
+function renderVolunteerOnboard(){
+  if(state.onboardingStep==='verify') return renderVolunteerVerify();
+  if(state.onboardingStep==='review') return renderVolunteerReview();
+  const extracted = state.onboardingExtracted ? extractSkillsFromBio(state.onboardingBio) : null;
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">GIVE YOUR SKILLS</div>
+      <h1>Tell us about yourself</h1>
+      <p>Write it the way you'd describe yourself to a friend. No forms, no taxonomy to fill in — SkillSetu structures it for you.</p>
+    </div>
+    <div class="step-track"><div class="st current"></div><div class="st"></div><div class="st"></div></div>
+
+    <div class="card">
+      <label class="field-label">Your professional background & skills</label>
+      <textarea id="bio-input" rows="4">${state.onboardingBio}</textarea>
+      <div class="flex justify-between items-center mt-16">
+        <span class="tiny mut">Try editing this, or leave the sample as-is.</span>
+        <button class="btn btn-primary btn-sm" id="extract-btn" ${state.onboardingExtracting?'disabled':''}>
+          ${state.onboardingExtracting? 'Extracting…' : 'Extract with AI →'}
+        </button>
+      </div>
+      ${state.onboardingExtracting ? `<div class="extract-anim"><span class="dot-flash"></span><span class="dot-flash"></span><span class="dot-flash"></span> Reading your background and matching it to a skill taxonomy…</div>` : ''}
+      ${extracted ? `
+        <hr class="hr-dash">
+        <div class="eyebrow warm mb-12">AI-STRUCTURED PROFILE</div>
+        <div class="struct-card">
+          <div class="struct-row"><span class="k">Skills</span><span class="v">${extracted.skills.join(', ')}</span></div>
+          <div class="struct-row"><span class="k">Experience</span><span class="v">${extracted.experience}</span></div>
+          <div class="struct-row"><span class="k">Level</span><span class="v">${extracted.seniority}</span></div>
+        </div>
+        <button class="btn btn-accent btn-block mt-24" id="to-verify-btn">Continue to verification →</button>
+      ` : ''}
+    </div>
+  </div>`;
+}
+
+function renderVolunteerVerify(){
+  const vf = state.verify;
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">GIVE YOUR SKILLS</div>
+      <h1>Verify your identity</h1>
+      <p>SkillSetu establishes trust before any match is made. Here's exactly what gets verified.</p>
+    </div>
+    <div class="step-track"><div class="st done"></div><div class="st current"></div><div class="st"></div></div>
+
+    <div class="card mb-16">
+      <div class="verify-step">
+        <div class="verify-num ${vf.mobileVerified?'done':'current'}">${vf.mobileVerified?'✓':'1'}</div>
+        <div class="verify-body">
+          <div class="verify-title">Mobile verification</div>
+          <div class="verify-desc">We send an OTP to confirm this is a real, reachable person.</div>
+          ${!vf.mobileVerified ? `
+            <div class="grid-2 mt-12">
+              <input type="tel" id="mobile-input" value="${vf.mobile}" ${vf.mobileSent?'disabled':''}>
+              ${!vf.mobileSent ? `<button class="btn btn-outline btn-sm" id="send-otp-btn">Send OTP →</button>`
+                : `<input type="text" id="otp-input" placeholder="Enter 4-digit OTP" maxlength="4">`}
+            </div>
+            ${vf.mobileSent ? `<button class="btn btn-primary btn-sm mt-12" id="verify-otp-btn">Verify OTP</button><div class="tiny mut mt-8">Demo OTP: 1234 (pre-filled for you)</div>` : ''}
+          ` : `<div class="tiny mut mt-8 font-mono">+91 ${vf.mobile} · verified</div>`}
+        </div>
+      </div>
+      <div class="verify-step">
+        <div class="verify-num ${vf.emailVerified?'done': vf.mobileVerified?'current':'pending'}">${vf.emailVerified?'✓':'2'}</div>
+        <div class="verify-body">
+          <div class="verify-title">Professional identity</div>
+          <div class="verify-desc">Work email or LinkedIn profile — this is what confirms your employer background.</div>
+          ${vf.mobileVerified && !vf.emailVerified ? `
+            <div class="grid-2 mt-12">
+              <input type="text" id="email-input" value="${vf.email}">
+              <button class="btn btn-outline btn-sm" id="verify-email-btn" ${vf.emailVerifying?'disabled':''}>${vf.emailVerifying?'Checking…':'Verify →'}</button>
+            </div>
+            ${vf.emailVerifying ? `<div class="extract-anim"><span class="dot-flash"></span><span class="dot-flash"></span><span class="dot-flash"></span> Matching domain to employer record…</div>` : ''}
+          ` : vf.emailVerified ? `<div class="tiny mut mt-8 font-mono">${vf.email} · verified</div>` : ''}
+        </div>
+      </div>
+      <div class="verify-step">
+        <div class="verify-num ${vf.emailVerified?'done':'pending'}">${vf.emailVerified?'✓':'3'}</div>
+        <div class="verify-body">
+          <div class="verify-title">Profile verification summary</div>
+          <div class="verify-desc">What's confirmed versus what you've told us yourself.</div>
+        </div>
+      </div>
+    </div>
+
+    ${vf.emailVerified ? `<button class="btn btn-accent btn-block" id="to-review-btn">Continue →</button>` : ''}
+  </div>`;
+}
+
+function renderVolunteerReview(){
+  const ext = extractSkillsFromBio(state.onboardingBio);
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">GIVE YOUR SKILLS</div>
+      <h1>Review your profile</h1>
+      <p>Here's what will be visible on the network.</p>
+    </div>
+    <div class="step-track"><div class="st done"></div><div class="st done"></div><div class="st current"></div></div>
+
+    <div class="card mb-16">
+      <div class="eyebrow mb-16">TRUST & VERIFICATION</div>
+      <div class="trust-grid">
+        <div class="trust-col">
+          <div class="tc-head" style="color:var(--primary);">VERIFIED</div>
+          <div class="trust-row"><div class="trust-mark v">✓</div> Mobile number</div>
+          <div class="trust-row"><div class="trust-mark v">✓</div> Professional identity</div>
+          <div class="trust-row"><div class="trust-mark v">✓</div> Employer / professional background</div>
+        </div>
+        <div class="trust-col">
+          <div class="tc-head" style="color:var(--muted);">SELF-DECLARED</div>
+          <div class="trust-row"><div class="trust-mark s">•</div> Skills</div>
+          <div class="trust-row"><div class="trust-mark s">•</div> Availability</div>
+          <div class="trust-row"><div class="trust-mark s">•</div> Causes of interest</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="struct-card mb-16">
+        <div class="struct-row"><span class="k">Skills</span><span class="v">${ext.skills.join(', ')}</span></div>
+        <div class="struct-row"><span class="k">Experience</span><span class="v">${ext.experience}</span></div>
+      </div>
+      <div class="grid-2">
+        <div><label class="field-label">Location</label><input type="text" id="loc-input" value="Bengaluru"></div>
+        <div><label class="field-label">Availability</label><input type="text" id="avail-input" value="Weekends, 2–3 hrs"></div>
+      </div>
+      <button class="btn btn-accent btn-block mt-24" id="save-profile-btn">Create my profile →</button>
+    </div>
+  </div>`;
+}
+
+/* ---- Volunteer profile ---- */
+function renderVolunteerProfile(){
+  const vid = state.params.vid || 'v1';
+  const v = state.newVolunteer && state.newVolunteer.id===vid ? state.newVolunteer : VOLUNTEERS.find(x=>x.id===vid) || VOLUNTEERS[0];
+  return `<div class="container">
+    <div class="profile-head">
+      <div class="avatar">${v.initials}</div>
+      <div class="profile-info" style="flex:1">
+        <div class="flex items-center gap-12"><h1>${v.name}</h1><span class="badge badge-verified">${icon('shield')} Verified</span></div>
+        <div class="role">${v.role} · ${v.company}</div>
+        <div class="meta-row"><span>📍 ${v.location}</span><span>🗓 ${v.availability}</span><span class="font-mono">${ppRemaining()} priority pts left</span></div>
+      </div>
+      <button class="btn btn-outline" data-nav="reputation" data-params='{"vid":"${v.id}"}'>View Giving Record →</button>
+    </div>
+
+    <div class="eyebrow mt-32 mb-12">GIVING RECORD</div>
+    <div class="ledger-grid" style="margin-top:0;">
+      <div class="ledger-cell"><div class="lc-num">${v.hoursGiven}</div><div class="lc-label">HOURS GIVEN</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.projectsCompleted}</div><div class="lc-label">PROJECTS COMPLETED</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.orgsHelped}</div><div class="lc-label">NONPROFITS HELPED</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.interests.length}</div><div class="lc-label">CAUSES SUPPORTED</div></div>
+    </div>
+
+    ${NEEDS.filter(q=>!state.priorityPoints.allocations[q.id]).slice(0,1).map(q=>renderOpportunityModule(q)).join('')}
+
+    <div class="two-col mt-24">
+      <div>
+        <div class="card mb-16">
+          <div class="eyebrow mb-16">SKILLS</div>
+          <div>${v.skills.map(s=>`<span class="skill-tag"><span class="lvl"></span>${s.name} — ${s.lvl}</span>`).join('')}</div>
+        </div>
+        <div class="card"><div class="eyebrow mb-12">ABOUT</div><p style="color:var(--ink-soft); font-size:14.5px;">${v.bio}</p></div>
+      </div>
+      <div>
+        <div class="card mb-16">
+          <div class="eyebrow mb-16">TRUST & VERIFICATION</div>
+          <div class="trust-col mb-16">
+            <div class="tc-head" style="color:var(--primary);">VERIFIED</div>
+            <div class="trust-row"><div class="trust-mark v">✓</div> Mobile number</div>
+            <div class="trust-row"><div class="trust-mark v">✓</div> Professional identity</div>
+            <div class="trust-row"><div class="trust-mark v">✓</div> Employer background</div>
+          </div>
+          <div class="trust-col">
+            <div class="tc-head" style="color:var(--muted);">SELF-DECLARED</div>
+            <div class="trust-row"><div class="trust-mark s">•</div> Skills</div>
+            <div class="trust-row"><div class="trust-mark s">•</div> Availability</div>
+            <div class="trust-row"><div class="trust-mark s">•</div> Causes of interest</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="eyebrow mb-12">INTERESTED CAUSES</div>
+          <div>${v.interests.map(i=>`<span class="chip" style="margin:0 8px 8px 0;">${i}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---- Nonprofit onboarding (registration -> contact -> summary) ---- */
+function renderNonprofitOnboard(){
+  const vf = state.npVerify;
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">FOR NONPROFITS</div>
+      <h1>Verify your organisation</h1>
+      <p>SkillSetu only works with verified nonprofits. Here's how that verification happens — simulated for this prototype.</p>
+    </div>
+
+    <div class="card mb-16">
+      <div class="flex justify-between items-start mb-16">
+        <div><div style="font-weight:700; font-size:17px;">Deepalaya Learning Trust</div><div class="small mut">Education · Chennai, TN</div></div>
+        ${vf.regVerified && vf.contactVerified ? `<span class="badge badge-verified">${icon('shield')} Verified</span>` : `<span class="badge badge-pending">Pending</span>`}
+      </div>
+      <p class="small mb-16" style="color:var(--ink-soft)">Runs after-school learning centres for children from low-income communities across 6 centres in Chennai.</p>
+
+      <div class="verify-step">
+        <div class="verify-num ${vf.regVerified?'done':'current'}">${vf.regVerified?'✓':'1'}</div>
+        <div class="verify-body">
+          <div class="verify-title">Registration check</div>
+          <div class="verify-desc">12A / 80G registration number checked against a simulated registry lookup.</div>
+          ${!vf.regVerified ? `
+            <div class="grid-2 mt-12">
+              <input type="text" value="12A/80G — CSR00034521" disabled>
+              <button class="btn btn-outline btn-sm" id="verify-reg-btn" ${vf.regChecking?'disabled':''}>${vf.regChecking?'Checking…':'Verify registration →'}</button>
+            </div>
+            ${vf.regChecking ? `<div class="extract-anim"><span class="dot-flash"></span><span class="dot-flash"></span><span class="dot-flash"></span> Looking up registration number…</div>` : ''}
+          ` : `<div class="tiny mut mt-8 font-mono">12A/80G — CSR00034521 · verified</div>`}
+        </div>
+      </div>
+      <div class="verify-step">
+        <div class="verify-num ${vf.contactVerified?'done': vf.regVerified?'current':'pending'}">${vf.contactVerified?'✓':'2'}</div>
+        <div class="verify-body">
+          <div class="verify-title">Authorised contact</div>
+          <div class="verify-desc">Confirms the person posting needs is authorised to represent this organisation.</div>
+          ${vf.regVerified && !vf.contactVerified ? `
+            <div class="grid-2 mt-12">
+              <input type="text" value="Lakshmi Venkat, Programme Director" disabled>
+              <button class="btn btn-outline btn-sm" id="verify-contact-btn" ${vf.contactChecking?'disabled':''}>${vf.contactChecking?'Checking…':'Verify contact →'}</button>
+            </div>
+            ${vf.contactChecking ? `<div class="extract-anim"><span class="dot-flash"></span><span class="dot-flash"></span><span class="dot-flash"></span> Confirming role against registered trustees…</div>` : ''}
+          ` : vf.contactVerified ? `<div class="tiny mut mt-8 font-mono">Lakshmi Venkat · Programme Director · verified</div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    ${vf.regVerified && vf.contactVerified ? `
+      <div class="card mb-16">
+        <div class="eyebrow mb-16">TRUST & VERIFICATION</div>
+        <div class="trust-grid">
+          <div class="trust-col">
+            <div class="tc-head" style="color:var(--primary);">VERIFIED</div>
+            <div class="trust-row"><div class="trust-mark v">✓</div> Registration (12A/80G)</div>
+            <div class="trust-row"><div class="trust-mark v">✓</div> Authorised contact</div>
+          </div>
+          <div class="trust-col">
+            <div class="tc-head" style="color:var(--muted);">SELF-DECLARED</div>
+            <div class="trust-row"><div class="trust-mark s">•</div> Cause area & description</div>
+            <div class="trust-row"><div class="trust-mark s">•</div> Location & centre count</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" data-nav="create-need">Describe a need →</button>
+    ` : ''}
+  </div>`;
+}
+
+/* ---- Create need ---- */
+function extractNeed(raw){
+  const lower = raw.toLowerCase();
+  let skill = 'General support';
+  const skillMap = { excel:'MS Excel', fundrais:'Fundraising Strategy', website:'Web Development', data:'Data Analysis', marketing:'Digital Marketing', financial:'Financial Modelling', hr:'HR Process Design', hiring:'HR Process Design', 'social media':'Social Media Strategy', legal:'Legal / Compliance', brand:'Brand Strategy' };
+  for(const k in skillMap){ if(lower.includes(k)){ skill = skillMap[k]; break; } }
+  const sessMatch = raw.match(/(\d+)\s*session/i);
+  const hourMatch = raw.match(/(\d+)\s*[- ]?hour/i);
+  const peopleMatch = raw.match(/(\d+)[- ]?(person|people|member|team)/i);
+  const sessions = sessMatch ? parseInt(sessMatch[1]) : (lower.includes('few weekend') || (lower.includes('weekends') && lower.includes('course')) ? 4 : 1);
+  return {
+    skill, type: sessions>1 ? 'Multi-session engagement' : 'Single session',
+    duration: hourMatch ? `${hourMatch[1]} hours` + (sessions>1?` × ${sessions} sessions`:'') : (sessions>1? `${sessions} sessions`:'~2 hours'),
+    participants: peopleMatch ? `${peopleMatch[1]} ${peopleMatch[2]}(s)` : '1–2 team members',
+    format: sessions>1? `${sessions}-session engagement` : 'Single session',
+    sessions,
+  };
+}
+
+function renderCreateNeed(){
+  const structured = state.needExtracted ? extractNeed(state.needDraft.raw) : null;
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">POST A NEED</div>
+      <h1>What do you need help with?</h1>
+      <p>Describe it in plain language, the way you'd explain it to a colleague.</p>
+    </div>
+    <div class="card">
+      <label class="field-label">Describe your need</label>
+      <textarea id="need-input" rows="4">${state.needDraft.raw}</textarea>
+      <div class="flex justify-between items-center mt-16">
+        <span class="tiny mut">One need, one volunteer — be as specific as you can.</span>
+        <button class="btn btn-primary btn-sm" id="extract-need-btn" ${state.needExtracting?'disabled':''}>${state.needExtracting? 'Structuring…' : 'Structure with AI →'}</button>
+      </div>
+      ${state.needExtracting ? `<div class="extract-anim"><span class="dot-flash"></span><span class="dot-flash"></span><span class="dot-flash"></span> Identifying skill, format, duration and participants…</div>` : ''}
+      ${structured ? `
+        <hr class="hr-dash">
+        <div class="eyebrow warm mb-12">AI-STRUCTURED NEED</div>
+        <div class="struct-card">
+          <div class="struct-row"><span class="k">Skill required</span><span class="v">${structured.skill}</span></div>
+          <div class="struct-row"><span class="k">Type</span><span class="v">${structured.type}</span></div>
+          <div class="struct-row"><span class="k">Duration</span><span class="v">${structured.duration}</span></div>
+          <div class="struct-row"><span class="k">Participants</span><span class="v">${structured.participants}</span></div>
+          <div class="struct-row"><span class="k">Format</span><span class="v">${structured.format}</span></div>
+        </div>
+        <button class="btn btn-accent btn-block mt-24" id="find-match-btn">Find the right volunteer →</button>
+      ` : ''}
+    </div>
+  </div>`;
+}
+
+/* ---- Matching (no numeric scores) ---- */
+function renderMatching(){
+  const needId = state.params.needId || 'q1';
+  const need = NEEDS.find(q=>q.id===needId) || NEEDS[0];
+  const np = NONPROFITS.find(n=>n.id===need.nonprofitId);
+  const matches = getMatches(need);
+  const npFirst = np.contact.split(',')[0];
+  return `<div class="container-narrow">
+    ${renderStageStepper('Match')}
+    <div class="page-head" style="padding-top:0;">
+      <div class="eyebrow">AI MATCHING</div>
+      <h1>Tell us what you need.<br>We'll find the right person.</h1>
+      <p class="human-line"><strong>${npFirst}</strong> needs help with ${need.structured.skill.toLowerCase()} — ${need.structured.duration}. Here's who we think fits best.</p>
+    </div>
+
+    ${matches.map((m,i)=>{
+      const v = VOLUNTEERS.find(x=>x.id===m.vid);
+      const isBest = i===0;
+      const isSel = state.selectedMatchVid===m.vid;
+      return `<div class="match-card ${isBest?'best':''} ${isSel?'selected':''}">
+        ${isBest? `<div class="best-tag">BEST MATCH</div>` : ''}
+        <div class="match-top">
+          <div class="flex gap-12">
+            <div class="avatar" style="width:52px;height:52px;font-size:18px;">${v.initials}</div>
+            <div>
+              <div style="font-weight:600; font-size:15.5px;">${v.name}</div>
+              <div class="small mut">${v.role}</div>
+              <div class="tiny mut mt-8">${v.location} · ${v.availability}</div>
+            </div>
+          </div>
+          ${!isBest ? `<div class="considered-tag">Also considered</div>` : ''}
+        </div>
+        <div class="match-reasons">${m.reasons.map(r=>`<div class="match-reason"><span class="ck">✓</span>${r}</div>`).join('')}</div>
+        <button class="btn ${isSel? 'btn-primary':'btn-outline'} btn-sm mt-16" data-select-match="${m.vid}" data-need="${need.id}">
+          ${isSel? 'Selected — accept below' : `Select ${v.name.split(' ')[0]}`}
+        </button>
+      </div>`;
+    }).join('')}
+
+    ${state.selectedMatchVid ? `<button class="btn btn-accent btn-block mt-16" id="accept-match-btn" data-need="${need.id}">Propose this match →</button>` : ''}
+  </div>`;
+}
+
+/* ---- Pending match: both sides get a 48-hour response window ---- */
+function renderPendingMatch(){
+  const p = state.pending;
+  if(!p) return `<div class="container-narrow mt-32">No pending match.</div>`;
+  const need = NEEDS.find(q=>q.id===p.needId);
+  const nonprofit = NONPROFITS.find(n=>n.id===need.nonprofitId);
+  const volunteer = (state.newVolunteer && state.newVolunteer.id===p.volId) ? state.newVolunteer : VOLUNTEERS.find(v=>v.id===p.volId);
+  const npFirst = nonprofit.contact.split(',')[0];
+
+  if(p.npStatus==='expired'){
+    return `<div class="container-narrow">
+      ${renderStageStepper('Match')}
+      <div class="page-head" style="padding-top:0;"><div class="eyebrow">NO RESPONSE FROM NONPROFIT</div><h1>We found ${volunteer.name.split(' ')[0]} another opportunity</h1><p class="human-line">${p.note}</p></div>
+      ${p.altNeed ? `<div class="match-card best">
+        <div class="best-tag">NEXT OPPORTUNITY</div>
+        <div class="match-top"><div><div style="font-weight:600;">${NONPROFITS.find(n=>n.id===p.altNeed.nonprofitId).name}</div><div class="small mut mt-8">${p.altNeed.structured.type} · ${p.altNeed.structured.duration}</div></div></div>
+        <button class="btn btn-accent btn-sm mt-16" data-nav="matching" data-params='{"needId":"${p.altNeed.id}"}'>View this opportunity →</button>
+      </div>` : ''}
+      <button class="btn btn-ghost btn-sm mt-16" data-nav="browse-needs">Browse all needs →</button>
+    </div>`;
+  }
+
+  return `<div class="container-narrow">
+    ${renderStageStepper('Match')}
+    <div class="page-head" style="padding-top:0;">
+      <div class="eyebrow">PROPOSED MATCH · PENDING RESPONSE</div>
+      <h1>Someone is waiting to hear back</h1>
+      <p class="human-line"><strong>${npFirst}</strong> is looking for help with ${need.structured.skill.toLowerCase()}. <strong>${volunteer.name}</strong> has been proposed as the best match. Both sides have 48 hours to respond — SkillSetu keeps things moving either way.</p>
+    </div>
+
+    ${p.note ? `<div class="struct-card mb-16"><p class="small" style="color:var(--ink)">${p.note}</p></div>` : ''}
+
+    <div class="grid-2 mb-16">
+      <div class="response-window">
+        <div class="rw-head"><span class="rw-who">${volunteer.name.split(' ')[0]} (volunteer)</span><span class="rw-timer">Respond within 48h</span></div>
+        <div class="small mut">Proposed for: ${need.structured.type}, ${nonprofit.name}</div>
+        ${p.volStatus==='pending' ? `
+          <div class="rw-actions">
+            <button class="btn btn-primary btn-sm" data-vol-resp="interested">Interested</button>
+            <button class="btn btn-outline btn-sm" data-vol-resp="declined">Not now</button>
+          </div>
+          <div class="rw-nudge">A reminder is sent if there's no response within 24 hours.</div>
+          <button class="btn btn-ghost btn-sm mt-8" data-vol-resp="expired">Simulate: no response after 48h →</button>
+        ` : p.volStatus==='interested' ? `<div class="rw-status">✓ Interested — waiting on ${nonprofit.name.split(' ')[0]}</div>`
+        : `<div class="rw-status" style="color:var(--muted)">Passed — ${volunteer.name.split(' ')[0]} wasn't available this time</div>`}
+      </div>
+
+      <div class="response-window">
+        <div class="rw-head"><span class="rw-who">${nonprofit.name}</span><span class="rw-timer">Respond within 48h</span></div>
+        <div class="small mut">Proposed volunteer: ${volunteer.name}</div>
+        ${p.npStatus==='pending' ? `
+          <div class="rw-actions">
+            <button class="btn btn-primary btn-sm" data-np-resp="confirmed">Confirm</button>
+            <button class="btn btn-outline btn-sm" data-np-resp="declined">Decline</button>
+          </div>
+          <div class="rw-nudge">A reminder is sent if there's no response within 24 hours.</div>
+          <button class="btn btn-ghost btn-sm mt-8" data-np-resp="expired">Simulate: no response after 48h →</button>
+        ` : p.npStatus==='confirmed' ? `<div class="rw-status">✓ Confirmed — waiting on ${volunteer.name.split(' ')[0]}</div>`
+        : `<div class="rw-status" style="color:var(--muted)">Declined this match</div>`}
+      </div>
+    </div>
+
+    <p class="tiny mut">Principle: pending → nudge → expiry → next match. Neither side is left waiting indefinitely.</p>
+  </div>`;
+}
+
+/* ---- Schedule (Google Calendar simulation, hero of orchestration) ---- */
+function renderSchedule(){
+  const needId = state.activeEngagementNeedId || state.params.needId;
+  const eng = state.engagements[needId];
+  if(!eng) return `<div class="container-narrow mt-32">No engagement selected.</div>`;
+  const isMulti = eng.sessions.length > 1;
+  return `<div class="container-narrow">
+    ${renderStageStepper('Schedule')}
+    <div class="page-head" style="padding-top:0;">
+      <div class="eyebrow">ENGAGEMENT SCHEDULED</div>
+      <h1>${eng.need.structured.type} with ${eng.volunteer.name.split(' ')[0]}</h1>
+      <p>${isMulti ? `SkillSetu creates every session upfront — not just the first one.` : `Both parties have been invited and reminded automatically.`}</p>
+    </div>
+
+    ${eng.sessions.map((s,i)=>`
+      <div class="cal-card">
+        <div class="cal-head">
+          <span class="ch-session">${isMulti? `SESSION ${i+1} OF ${eng.sessions.length}` : 'SESSION'} — ${s.title.toUpperCase()}</span>
+          <span class="badge badge-verified">✓ Confirmed</span>
+        </div>
+        <div class="cal-body">
+          <div class="cal-date-row"><span class="cd-day">${s.date}</span><span class="cd-time">${s.time}</span></div>
+          <div class="cal-mode">Online · SkillSetu video room</div>
+          <div class="confirm-list">
+            <div class="confirm-item"><span class="cm">✓</span> Calendar invitation sent to ${eng.nonprofit.name.split(' ')[0]}</div>
+            <div class="confirm-item"><span class="cm">✓</span> Calendar invitation sent to ${eng.volunteer.name.split(' ')[0]}</div>
+            <div class="confirm-item"><span class="cm">✓</span> Reminder scheduled for 24 hours before</div>
+            <div class="confirm-item"><span class="cm">✓</span> Preparation task due 2 days before</div>
+          </div>
+          <button class="gcal-btn" data-gcal="${s.id}">📅 Add to Google Calendar</button>
+          ${state.gcalConfirmed[s.id] ? `<div class="gcal-confirm">✓ Google Calendar event created. Both participants have been invited.</div>` : ''}
+        </div>
+      </div>
+    `).join('')}
+
+    <button class="btn btn-accent btn-block mt-16" id="to-engagement-btn">Go to engagement dashboard →</button>
+  </div>`;
+}
+
+/* ---- Engagement dashboard (the passbook) ---- */
+function renderEngagement(){
+  const needId = state.activeEngagementNeedId || state.params.needId;
+  const eng = state.engagements[needId];
+  if(!eng){ return `<div class="container-narrow mt-32"><p>No active engagement yet. <button class="btn btn-outline btn-sm" data-nav="browse-needs">Browse needs</button></p></div>`; }
+
+  const curIdx = eng.currentSessionIndex;
+  const totalSessions = eng.sessions.length;
+  const allDone = eng.completed;
+
+  return `<div class="container-narrow">
+    ${renderStageStepper(allDone ? 'Feedback' : 'Prepare')}
+    <div class="page-head" style="padding-top:0;">
+      <div class="eyebrow">ENGAGEMENT ORCHESTRATION</div>
+      <h1>${eng.need.structured.type}</h1>
+      <p class="human-line"><strong>${eng.nonprofit.contact.split(',')[0]}</strong> and <strong>${eng.volunteer.name}</strong> are working together — SkillSetu is managing the rest end to end.</p>
+    </div>
+
+    ${eng.fallbackNotice ? `<div class="struct-card mb-24" style="border-color:var(--danger); background:var(--danger-wash);">
+      <div class="eyebrow" style="color:var(--danger)">FALLBACK LOGIC ACTIVATED</div>
+      <p class="small mt-8" style="color:var(--ink)">${eng.fallbackNotice}</p>
+    </div>` : ''}
+
+    <div class="passbook">
+      <div class="passbook-head">
+        <div><div class="ph-title">Engagement Passbook</div><div class="ph-sub">${totalSessions} session${totalSessions>1?'s':''} · Status: ${allDone? 'COMPLETED' : eng.status.toUpperCase()}</div></div>
+        <span class="badge ${allDone?'badge-verified':'badge-neutral'}">${allDone? '✓ Complete':'● In progress'}</span>
+      </div>
+      <div class="perf-edge"></div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-content"><div class="tl-title">Match accepted</div><div class="tl-date">${eng.volunteer.name} confirmed for this engagement</div></div></div>
+        <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-content"><div class="tl-title">All sessions scheduled</div><div class="tl-desc">Google Calendar events created for both ${eng.nonprofit.contact.split(',')[0]} and ${eng.volunteer.name} (simulated).</div></div></div>
+        ${eng.sessions.map((s,i)=>`
+          <div class="tl-item">
+            <div class="tl-dot ${i<curIdx || allDone ? 'done' : i===curIdx ? 'current':'pending'}">${i<curIdx||allDone?'✓':i+1}</div>
+            <div class="tl-content">
+              <div class="tl-title">${s.title}</div>
+              <div class="tl-date">${s.date} · ${s.time}</div>
+              ${i===curIdx && !allDone ? `<button class="btn btn-primary btn-sm mt-12" data-complete-session="${s.id}">Mark session complete →</button>` : ''}
+            </div>
+          </div>`).join('')}
+        <div class="tl-item"><div class="tl-dot ${allDone?'done':'pending'}">${allDone?'✓':'★'}</div><div class="tl-content"><div class="tl-title">Feedback & reputation</div><div class="tl-desc">${allDone? 'Both sides can now leave feedback.' : 'Unlocks once all sessions are complete.'}</div></div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card mb-16">
+          <div class="eyebrow mb-12">PREPARATION — THIS SESSION</div>
+          <div class="tiny mut mb-8">${eng.volunteer.name.split(' ')[0]}'s tasks</div>
+          <div class="task-list mb-16">
+            ${eng.sessions[curIdx] ? eng.sessions[curIdx].volTasks.map((t,i)=>`
+              <div class="task-item ${t.done?'checked':''}" data-toggle-task="vol-${curIdx}-${i}">
+                <span class="task-check">${t.done?'✓':''}</span><span class="tt">${t.t}</span>
+                ${t.dueDaysBefore ? `<span class="task-due">DUE ${t.dueDaysBefore}D BEFORE</span>` : ''}
+              </div>`).join('') : ''}
+          </div>
+          <div class="tiny mut mb-8">${eng.nonprofit.name.split(' ')[0]}'s tasks</div>
+          <div class="task-list">
+            ${eng.sessions[curIdx] ? eng.sessions[curIdx].npTasks.map((t,i)=>`
+              <div class="task-item ${t.done?'checked':''}" data-toggle-task="np-${curIdx}-${i}">
+                <span class="task-check">${t.done?'✓':''}</span><span class="tt">${t.t}</span>
+                ${t.dueDaysBefore ? `<span class="task-due">DUE ${t.dueDaysBefore}D BEFORE</span>` : ''}
+              </div>`).join('') : ''}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow mb-12">SYSTEM ACTIVITY (SIMULATED)</div>
+          <div class="integration-row"><div class="ir-icon">${icon('cal')}</div><div class="ir-text"><div class="ir-title">Google Calendar</div><div class="ir-sub">ALL ${totalSessions} EVENT${totalSessions>1?'S':''} CREATED</div></div><span class="badge badge-verified">Synced</span></div>
+          <div class="integration-row"><div class="ir-icon">${icon('bell')}</div><div class="ir-text"><div class="ir-title">Reminders</div><div class="ir-sub">${eng.reminders.length} SENT AHEAD OF NEXT SESSION</div></div><span class="badge badge-neutral">Active</span></div>
+          <div class="integration-row"><div class="ir-icon">${icon('wa')}</div><div class="ir-text"><div class="ir-title">WhatsApp bridge</div><div class="ir-sub">ENGAGEMENT THREAD OPEN BELOW</div></div><span class="badge badge-verified">Connected</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card mb-16">
+          <div class="eyebrow mb-12">COMMUNICATION</div>
+          <div class="thread">
+            ${eng.comms.map(c=>`${c.from==='system' ? `<div class="bubble sys">${c.text}</div>` : `<div class="bubble ${c.from==='volunteer'?'us':'them'}">${c.text}<div class="bt">${c.t}</div></div>`}`).join('')}
+          </div>
+        </div>
+        ${!allDone ? `<div class="card">
+          <div class="eyebrow mb-12">FALLBACK SAFEGUARD</div>
+          <p class="tiny mut mb-12">If ${eng.volunteer.name.split(' ')[0]} doesn't respond within 48 hrs, SkillSetu automatically activates the nonprofit's second-choice match, so the engagement never stalls.</p>
+          <button class="btn btn-outline btn-sm btn-block" id="simulate-noresponse-btn">Simulate: volunteer doesn't respond →</button>
+        </div>` : `<div class="card">
+          <div class="eyebrow mb-12">NEXT STEP</div>
+          <p class="small mb-12">All sessions are complete. Feedback unlocks the reputation layer for both sides.</p>
+          <button class="btn btn-accent btn-block" data-nav="feedback" data-params='{"needId":"${needId}"}'>Leave feedback →</button>
+        </div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---- Feedback ---- */
+function renderFeedback(){
+  const needId = state.params.needId || state.activeEngagementNeedId;
+  const eng = state.engagements[needId];
+  if(!eng) return `<div class="container-narrow mt-32">No engagement selected.</div>`;
+  const step = state.feedbackStep;
+  const d = state.feedbackDraft;
+  const dims = [['quality','Quality of the work / session'],['communication','Communication'],['reliability','Reliability & punctuality']];
+
+  if(step==='done'){
+    return `<div class="container-narrow">
+      ${renderStageStepper('Feedback')}
+      <div class="page-head" style="padding-top:0;"><div class="eyebrow">FEEDBACK COMPLETE</div><h1>Both sides have rated this engagement</h1><p>The volunteer's giving history has been updated.</p></div>
+      <div class="card mb-16">
+        <div class="eyebrow mb-12">${eng.volunteer.name}'s rating of ${eng.nonprofit.name}</div>
+        ${dims.map(([k,l])=>`<div class="rating-row"><span class="small">${l}</span><span>${'★'.repeat(eng.feedback.volunteerToNonprofit[k])}${'☆'.repeat(5-eng.feedback.volunteerToNonprofit[k])}</span></div>`).join('')}
+      </div>
+      <div class="card mb-24">
+        <div class="eyebrow mb-12">${eng.nonprofit.name}'s rating of ${eng.volunteer.name}</div>
+        ${dims.map(([k,l])=>`<div class="rating-row"><span class="small">${l}</span><span>${'★'.repeat(eng.feedback.nonprofitToVolunteer[k])}${'☆'.repeat(5-eng.feedback.nonprofitToVolunteer[k])}</span></div>`).join('')}
+      </div>
+      <button class="btn btn-accent btn-block" data-nav="reputation" data-params='{"vid":"${eng.volunteer.id}"}'>View updated reputation profile →</button>
+    </div>`;
+  }
+
+  const isVol = step==='volunteer';
+  const ratee = isVol ? eng.nonprofit.name : eng.volunteer.name;
+  const rater = isVol ? eng.volunteer.name : eng.nonprofit.contact.split(',')[0];
+
+  return `<div class="container-narrow">
+    ${renderStageStepper('Feedback')}
+    <div class="page-head" style="padding-top:0;">
+      <div class="eyebrow">TWO-SIDED FEEDBACK</div>
+      <h1>${rater}, how did it go?</h1>
+      <p>Rating ${ratee}. Independent from the other side's rating — neither sees the other's until both are submitted.</p>
+    </div>
+    <div class="card">
+      ${dims.map(([k,l])=>`
+        <div class="rating-row">
+          <span class="small">${l}</span>
+          <div class="stars" data-star-group="${k}">
+            ${[1,2,3,4,5].map(n=>`<svg class="star ${d[k]>=n?'on':''}" data-star="${k}:${n}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+      <div class="rating-row">
+        <span class="small">Engagement completed as planned?</span>
+        <div class="pill-select">
+          <div class="pill-opt ${d.completed? 'on':''}" data-completed="true">Yes</div>
+          <div class="pill-opt ${!d.completed? 'on':''}" data-completed="false">No</div>
+        </div>
+      </div>
+      <button class="btn btn-accent btn-block mt-24" id="submit-feedback-btn" ${(d.quality&&d.communication&&d.reliability)?'':'disabled'}>Submit feedback →</button>
+    </div>
+  </div>`;
+}
+
+/* ---- Reputation: the Giving Record ---- */
+function renderReputation(){
+  const vid = state.params.vid || state.reputationVid || 'v1';
+  const v = state.newVolunteer && state.newVolunteer.id===vid ? state.newVolunteer : VOLUNTEERS.find(x=>x.id===vid) || VOLUNTEERS[0];
+  const liveCompleted = Object.values(state.engagements).filter(e=>e.volunteer.id===v.id && e.completed);
+  const seedEntries = getGivingHistory(v);
+  const liveEntries = liveCompleted.map(e=>({ skill:e.need.structured.skill, org:e.nonprofit.name, hours:e.sessions.length*2, date:'This week' }));
+  const allEntries = [...liveEntries, ...seedEntries];
+  const byYear = {};
+  allEntries.forEach(en=>{ const y = (en.date.match(/\d{4}/)||['This week'])[0]; (byYear[y] = byYear[y]||[]).push(en); });
+  const years = Object.keys(byYear).sort((a,b)=> a==='This week' ? -1 : b==='This week' ? 1 : b-a);
+
+  return `<div class="container-narrow">
+    <div class="page-head">
+      <div class="eyebrow">GIVING RECORD</div>
+      <h1>${v.name}</h1>
+      <p>${v.skills.slice(0,3).map(s=>s.name).join(' · ')} — what ${v.name.split(' ')[0]} has actually given.</p>
+    </div>
+    <div class="ledger-grid">
+      <div class="ledger-cell"><div class="lc-num">${v.hoursGiven}</div><div class="lc-label">HOURS GIVEN</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.projectsCompleted}</div><div class="lc-label">PROJECTS COMPLETED</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.orgsHelped}</div><div class="lc-label">NONPROFITS HELPED</div></div>
+      <div class="ledger-cell"><div class="lc-num">${v.interests.length}</div><div class="lc-label">CAUSES SUPPORTED</div></div>
+    </div>
+    <div class="card mb-16">
+      ${years.map(y=>`
+        <div class="giving-year">${y}</div>
+        ${byYear[y].map(en=>`
+          <div class="giving-entry">
+            <div class="giving-dot"></div>
+            <div><div class="ge-text">Helped <strong>${en.org}</strong> with ${en.skill.toLowerCase()}</div><div class="ge-meta">~${en.hours} hours · ${en.date}</div></div>
+          </div>
+        `).join('')}
+      `).join('')}
+    </div>
+    <div class="card">
+      <div class="eyebrow mb-12">CAUSES SUPPORTED</div>
+      <p class="small mb-16" style="color:var(--ink-soft)">Every completed engagement adds to this record — a plain account of what was given, not a score.</p>
+      <div>${v.interests.map(i=>`<span class="chip" style="margin:0 8px 8px 0;">${i}</span>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Event wiring ---------------- */
+function attachHandlers(){
+  document.querySelectorAll('[data-pp-allocate]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const [needId, pts] = el.getAttribute('data-pp-allocate').split(':');
+      ppAllocate(needId, parseInt(pts));
+    });
+  });
+
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const page = el.getAttribute('data-nav');
+      const params = el.getAttribute('data-params');
+      go(page, params? JSON.parse(params) : {});
+    });
+  });
+
+  const extractBtn = document.getElementById('extract-btn');
+  if(extractBtn) extractBtn.addEventListener('click', ()=>{
+    state.onboardingBio = document.getElementById('bio-input').value;
+    state.onboardingExtracting = true; state.onboardingExtracted=false; render();
+    setTimeout(()=>{ state.onboardingExtracting=false; state.onboardingExtracted=true; render(); }, 1000);
+  });
+  const toVerifyBtn = document.getElementById('to-verify-btn');
+  if(toVerifyBtn) toVerifyBtn.addEventListener('click', ()=>{ state.onboardingStep='verify'; render(); });
+
+  const sendOtpBtn = document.getElementById('send-otp-btn');
+  if(sendOtpBtn) sendOtpBtn.addEventListener('click', ()=>{
+    state.verify.mobile = document.getElementById('mobile-input').value;
+    state.verify.mobileSent = true; render();
+    toast('OTP sent (simulated) ✓');
+  });
+  const verifyOtpBtn = document.getElementById('verify-otp-btn');
+  if(verifyOtpBtn) verifyOtpBtn.addEventListener('click', ()=>{
+    state.verify.mobileVerified = true; render();
+    toast('Mobile number verified ✓');
+  });
+  const verifyEmailBtn = document.getElementById('verify-email-btn');
+  if(verifyEmailBtn) verifyEmailBtn.addEventListener('click', ()=>{
+    state.verify.email = document.getElementById('email-input').value;
+    state.verify.emailVerifying = true; render();
+    setTimeout(()=>{ state.verify.emailVerifying=false; state.verify.emailVerified=true; render(); toast('Professional identity verified ✓'); }, 1000);
+  });
+  const toReviewBtn = document.getElementById('to-review-btn');
+  if(toReviewBtn) toReviewBtn.addEventListener('click', ()=>{ state.onboardingStep='review'; render(); });
+
+  const saveBtn = document.getElementById('save-profile-btn');
+  if(saveBtn) saveBtn.addEventListener('click', ()=>{
+    const ext = extractSkillsFromBio(state.onboardingBio);
+    const loc = document.getElementById('loc-input').value;
+    const avail = document.getElementById('avail-input').value;
+    state.newVolunteer = { id:'v1', name:'Naveen Prashanth', initials:'NP', role:'Marketing Professional', company:ext.seniority+', '+ext.experience,
+      location:loc, verified:true, skills:ext.skills.map(s=>({name:s,lvl:'Advanced'})), availability:avail, interests:['Education','Livelihoods'],
+      bio: state.onboardingBio, hoursGiven:18, projectsCompleted:5, orgsHelped:4, rating:4.9 };
+    toast('Profile created — verification complete ✓');
+    go('volunteer-profile', {vid:'v1'});
+  });
+
+  const verifyRegBtn = document.getElementById('verify-reg-btn');
+  if(verifyRegBtn) verifyRegBtn.addEventListener('click', ()=>{
+    state.npVerify.regChecking = true; render();
+    setTimeout(()=>{ state.npVerify.regChecking=false; state.npVerify.regVerified=true; render(); toast('Registration verified ✓'); }, 1000);
+  });
+  const verifyContactBtn = document.getElementById('verify-contact-btn');
+  if(verifyContactBtn) verifyContactBtn.addEventListener('click', ()=>{
+    state.npVerify.contactChecking = true; render();
+    setTimeout(()=>{ state.npVerify.contactChecking=false; state.npVerify.contactVerified=true; render(); toast('Authorised contact verified ✓'); }, 1000);
+  });
+
+  const extractNeedBtn = document.getElementById('extract-need-btn');
+  if(extractNeedBtn) extractNeedBtn.addEventListener('click', ()=>{
+    state.needDraft.raw = document.getElementById('need-input').value;
+    state.needExtracting = true; state.needExtracted = false; render();
+    setTimeout(()=>{ state.needExtracting=false; state.needExtracted=true; render(); }, 1000);
+  });
+  const findMatchBtn = document.getElementById('find-match-btn');
+  if(findMatchBtn) findMatchBtn.addEventListener('click', ()=>{ state.selectedMatchVid = null; go('matching', {needId:'q1'}); });
+
+  document.querySelectorAll('[data-select-match]').forEach(el=>{
+    el.addEventListener('click', ()=>{ state.selectedMatchVid = el.getAttribute('data-select-match'); render(); });
+  });
+  const acceptBtn = document.getElementById('accept-match-btn');
+  if(acceptBtn) acceptBtn.addEventListener('click', ()=>{
+    const needId = acceptBtn.getAttribute('data-need');
+    initPending(needId, state.selectedMatchVid);
+    toast('Match proposed — waiting on both sides to respond ✓');
+    go('pending-match', {needId});
+  });
+
+  document.querySelectorAll('[data-vol-resp]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const val = el.getAttribute('data-vol-resp');
+      if(val==='interested'){ state.pending.volStatus='interested'; render(); if(!pendingCheckBothReady()){} }
+      else if(val==='declined'){ pendingReassignVolunteer(`Looks like they didn't have time for this one.`); }
+      else if(val==='expired'){ pendingReassignVolunteer(`They didn't respond in time.`); }
+    });
+  });
+  document.querySelectorAll('[data-np-resp]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const val = el.getAttribute('data-np-resp');
+      if(val==='confirmed'){ state.pending.npStatus='confirmed'; render(); if(!pendingCheckBothReady()){} }
+      else if(val==='declined'){ pendingReassignVolunteer(`The nonprofit decided to look elsewhere.`); }
+      else if(val==='expired'){ pendingReleaseVolunteerToOther(); }
+    });
+  });
+
+  document.querySelectorAll('[data-gcal]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const sid = el.getAttribute('data-gcal');
+      state.gcalConfirmed[sid] = true;
+      render();
+    });
+  });
+  const toEngagementBtn = document.getElementById('to-engagement-btn');
+  if(toEngagementBtn) toEngagementBtn.addEventListener('click', ()=>{ go('engagement', {needId: state.activeEngagementNeedId}); });
+
+  document.querySelectorAll('[data-toggle-task]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const [side, sIdx, tIdx] = el.getAttribute('data-toggle-task').split('-');
+      const eng = state.engagements[state.activeEngagementNeedId];
+      const list = side==='vol' ? eng.sessions[sIdx].volTasks : eng.sessions[sIdx].npTasks;
+      list[tIdx].done = !list[tIdx].done;
+      render();
+    });
+  });
+
+  const completeBtn = document.querySelector('[data-complete-session]');
+  if(completeBtn) completeBtn.addEventListener('click', ()=>{
+    const sid = completeBtn.getAttribute('data-complete-session');
+    const eng = state.engagements[state.activeEngagementNeedId];
+    const idx = eng.sessions.findIndex(s=>s.id===sid);
+    eng.sessions[idx].status='done';
+    eng.comms.push({from:'system', text:`${eng.sessions[idx].title} marked complete.`, t:'now'});
+    if(idx === eng.sessions.length-1){
+      eng.completed = true; eng.status='completed';
+      eng.comms.push({from:'nonprofit', text:`Thank you so much, ${eng.volunteer.name.split(' ')[0]}! This made a real difference for our team.`, t:'now'});
+      toast('All sessions complete — feedback unlocked ✓');
+    } else {
+      eng.currentSessionIndex = idx+1;
+      toast(`Session complete. Reminders sent ahead of "${eng.sessions[idx+1].title}" ✓`);
+    }
+    render();
+  });
+
+  const noResponseBtn = document.getElementById('simulate-noresponse-btn');
+  if(noResponseBtn) noResponseBtn.addEventListener('click', ()=>{
+    const eng = state.engagements[state.activeEngagementNeedId];
+    const need = eng.need;
+    const matches = getMatches(need);
+    const second = matches[1];
+    const secondVol = VOLUNTEERS.find(v=>v.id===second.vid);
+    eng.volunteer = secondVol;
+    eng.fallbackNotice = `The original volunteer did not respond within 48 hours. SkillSetu automatically activated the nonprofit's second-choice match — ${secondVol.name} — so the engagement continued without delay.`;
+    eng.comms = [
+      {from:'system', text:`Reassigned to ${secondVol.name} after no response from the original match.`, t:'now'},
+      {from:'volunteer', text:`Hi, I'd be glad to help with this — looking forward to it!`, t:'just now'},
+    ];
+    toast('Second-choice volunteer activated automatically ✓');
+    render();
+  });
+
+  document.querySelectorAll('[data-star]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const [k,n] = el.getAttribute('data-star').split(':');
+      state.feedbackDraft[k] = parseInt(n);
+      render();
+    });
+  });
+  document.querySelectorAll('[data-completed]').forEach(el=>{
+    el.addEventListener('click', ()=>{ state.feedbackDraft.completed = el.getAttribute('data-completed')==='true'; render(); });
+  });
+  const submitFbBtn = document.getElementById('submit-feedback-btn');
+  if(submitFbBtn) submitFbBtn.addEventListener('click', ()=>{
+    const needId = state.params.needId || state.activeEngagementNeedId;
+    const eng = state.engagements[needId];
+    const snapshot = {...state.feedbackDraft};
+    if(state.feedbackStep==='volunteer'){
+      eng.feedback.volunteerToNonprofit = snapshot;
+      state.feedbackStep='nonprofit';
+      state.feedbackDraft = { quality:0, communication:0, reliability:0, completed:true };
+      toast('Feedback recorded — now the nonprofit rates the volunteer');
+    } else {
+      eng.feedback.nonprofitToVolunteer = snapshot;
+      eng.volunteer.hoursGiven += eng.sessions.length * 2;
+      eng.volunteer.projectsCompleted += 1;
+      state.feedbackStep='done';
+      toast('Reputation profile updated ✓');
+    }
+    render();
+  });
+}
+
+render();
+</script>
+</body>
+</html>
