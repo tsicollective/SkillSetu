@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkillSetu — Give what you know</title>
+<title>Skills-For-Good — Give what you know</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -295,7 +295,7 @@ label.field-label{ display:block; font-size:13px; font-weight:600; color:var(--i
 <div id="app"></div>
 <script>
 /* =========================================================
-   SKILLSETU PROTOTYPE — mock data + SPA render engine
+   Skills For Good PROTOTYPE — mock data + SPA render engine
    ========================================================= */
 
 const VOLUNTEERS = [
@@ -489,7 +489,7 @@ function buildEngagement(need, volunteer){
       `${nonprofit.name} reminded to prepare participant list`,
     ],
     comms:[
-      { from:'system', text:`SkillSetu has connected you both for "${need.structured.type}". This thread is only for this engagement.` , t:'now'},
+      { from:'system', text:`Skills For Good has connected you both for "${need.structured.type}". This thread is only for this engagement.` , t:'now'},
       { from:'nonprofit', text:`Hi ${volunteer.name.split(' ')[0]}, thank you so much for offering your time! Looking forward to ${sessions[0].date}.`, t:'2m ago' },
       { from:'volunteer', text:`Happy to help, ${nonprofit.contact.split(',')[0]}! Could you share the group's current comfort level beforehand?`, t:'just now' },
     ],
@@ -515,7 +515,7 @@ function renderNav(){
   return `
   <div class="topnav">
     <div class="topnav-inner">
-      <div class="brand" style="cursor:pointer" data-nav="landing"><div class="brand-mark">SS</div> SkillSetu</div>
+      <div class="brand" style="cursor:pointer" data-nav="landing"><div class="brand-mark">SS</div> Skills For Good</div>
       <div class="nav-links">
         ${links.map(([p,l])=>`<button data-nav="${p}" class="${state.page===p?'active':''}">${l}</button>`).join('')}
         <button data-nav="volunteer-onboard">Give my skills</button>
@@ -528,7 +528,7 @@ function renderNav(){
 
 function renderFooter(){
   return `<footer><div class="container">
-    <div class="footer-note">SKILLSETU — DIGITAL INFRASTRUCTURE FOR SKILLED GIVING · PROTOTYPE BUILD</div>
+    <div class="footer-note">Skills For Good — DIGITAL INFRASTRUCTURE FOR SKILLED GIVING · PROTOTYPE BUILD</div>
     <div class="footer-note">NO PAYMENTS · NO BIDDING · ONE NONPROFIT + ONE VOLUNTEER + ONE NEED</div>
   </div></footer>`;
 }
@@ -572,7 +572,7 @@ function renderLanding(){
     <div class="hero">
       <div class="hero-eyebrow">Digital infrastructure for skilled giving</div>
       <h1>Give what you know. <span>Help where it matters.</span></h1>
-      <p class="lede">Millions of skilled professionals. Countless nonprofits that need exactly what they know. SkillSetu is the structure that connects the two — and makes sure the engagement actually happens.</p>
+      <p class="lede">Millions of skilled professionals. Countless nonprofits that need exactly what they know. Skills For Good is the structure that connects the two — and makes sure the engagement actually happens.</p>
       <div class="hero-actions">
         <button class="btn btn-accent" data-nav="volunteer-onboard">I want to give my skills →</button>
         <button class="btn btn-outline" data-nav="nonprofit-onboard">My organisation needs help →</button>
@@ -583,13 +583,13 @@ function renderLanding(){
       <div class="side-card" data-nav="volunteer-onboard">
         <div class="num font-mono">FOR PROFESSIONALS</div>
         <h3>Offer your time, not your money</h3>
-        <p>Describe your skills in your own words. SkillSetu structures your profile, finds a nonprofit that genuinely needs what you know, and manages the engagement from first invite to final thank-you.</p>
+        <p>Describe your skills in your own words. Skills For Good structures your profile, finds a nonprofit that genuinely needs what you know, and manages the engagement from first invite to final thank-you.</p>
         <span class="btn btn-outline btn-sm">Create your profile</span>
       </div>
       <div class="side-card" data-nav="nonprofit-onboard">
         <div class="num font-mono">FOR VERIFIED NONPROFITS</div>
         <h3>Describe the problem. We'll find the person.</h3>
-        <p>Tell us what you need in plain language — no job posting, no back-and-forth with recruiters. SkillSetu matches you with one qualified volunteer and runs the engagement end to end.</p>
+        <p>Tell us what you need in plain language — no job posting, no back-and-forth with recruiters. Skills For Good matches you with one qualified volunteer and runs the engagement end to end.</p>
         <span class="btn btn-outline btn-sm">Post a need</span>
       </div>
     </div>
@@ -603,11 +603,11 @@ function renderLanding(){
 
     <div class="section">
       <div class="section-head">
-        <div><h2>The engagement, not just the match</h2><p>Most platforms stop at introduction. SkillSetu treats that as the start of the job.</p></div>
+        <div><h2>The engagement, not just the match</h2><p>Most platforms stop at introduction. Skills For Good treats that as the start of the job.</p></div>
       </div>
       <div class="flow-steps">
-        ${['Need described in plain language','AI structures the need','SkillSetu finds the right match','Sessions scheduled, tasks assigned','Feedback becomes reputation']
-          .map((t,i)=>`<div class="flow-step"><div class="fs-line"><div class="fs-dot"></div></div><h4>${t}</h4><p>${['A nonprofit types what they need, the way they\'d explain it to a friend.','Skill, format, duration and participants are extracted automatically.','SkillSetu recommends the best match and explains why.','Calendar invites, prep tasks and reminders sent to both sides.','Both sides rate the engagement. A giving history is built over time.'][i]}</p></div>`).join('')}
+        ${['Need described in plain language','AI structures the need','Skills For Good finds the right match','Sessions scheduled, tasks assigned','Feedback becomes reputation']
+          .map((t,i)=>`<div class="flow-step"><div class="fs-line"><div class="fs-dot"></div></div><h4>${t}</h4><p>${['A nonprofit types what they need, the way they\'d explain it to a friend.','Skill, format, duration and participants are extracted automatically.','Skills For Good recommends the best match and explains why.','Calendar invites, prep tasks and reminders sent to both sides.','Both sides rate the engagement. A giving history is built over time.'][i]}</p></div>`).join('')}
       </div>
     </div>
 
@@ -664,7 +664,7 @@ function renderBrowseNeeds(){
     <div class="page-head">
       <div class="eyebrow">THE NETWORK</div>
       <h1>Open needs</h1>
-      <p>Requests from verified nonprofits, structured by SkillSetu's matching layer.</p>
+      <p>Requests from verified nonprofits, structured by Skills For Good's matching layer.</p>
     </div>
     <div class="mt-32">
       ${NEEDS.map(q=>{
@@ -705,7 +705,7 @@ function renderVolunteerOnboard(){
     <div class="page-head">
       <div class="eyebrow">GIVE YOUR SKILLS</div>
       <h1>Tell us about yourself</h1>
-      <p>Write it the way you'd describe yourself to a friend. No forms, no taxonomy to fill in — SkillSetu structures it for you.</p>
+      <p>Write it the way you'd describe yourself to a friend. No forms, no taxonomy to fill in — Skills For Good structures it for you.</p>
     </div>
     <div class="step-track"><div class="st current"></div><div class="st"></div><div class="st"></div></div>
 
@@ -739,7 +739,7 @@ function renderVolunteerVerify(){
     <div class="page-head">
       <div class="eyebrow">GIVE YOUR SKILLS</div>
       <h1>Verify your identity</h1>
-      <p>SkillSetu establishes trust before any match is made. Here's exactly what gets verified.</p>
+      <p>Skills For Good establishes trust before any match is made. Here's exactly what gets verified.</p>
     </div>
     <div class="step-track"><div class="st done"></div><div class="st current"></div><div class="st"></div></div>
 
@@ -890,7 +890,7 @@ function renderNonprofitOnboard(){
     <div class="page-head">
       <div class="eyebrow">FOR NONPROFITS</div>
       <h1>Verify your organisation</h1>
-      <p>SkillSetu only works with verified nonprofits. Here's how that verification happens — simulated for this prototype.</p>
+      <p>Skills For Good only works with verified nonprofits. Here's how that verification happens — simulated for this prototype.</p>
     </div>
 
     <div class="card mb-16">
@@ -1055,7 +1055,7 @@ function renderSchedule(){
     <div class="page-head" style="padding-top:0;">
       <div class="eyebrow">ENGAGEMENT SCHEDULED</div>
       <h1>${eng.need.structured.type} with ${eng.volunteer.name.split(' ')[0]}</h1>
-      <p>${isMulti ? `SkillSetu creates every session upfront — not just the first one.` : `Both parties have been invited and reminded automatically.`}</p>
+      <p>${isMulti ? `Skills For Good creates every session upfront — not just the first one.` : `Both parties have been invited and reminded automatically.`}</p>
     </div>
 
     ${eng.sessions.map((s,i)=>`
@@ -1066,7 +1066,7 @@ function renderSchedule(){
         </div>
         <div class="cal-body">
           <div class="cal-date-row"><span class="cd-day">${s.date}</span><span class="cd-time">${s.time}</span></div>
-          <div class="cal-mode">Online · SkillSetu video room</div>
+          <div class="cal-mode">Online · Skills For Good video room</div>
           <div class="confirm-list">
             <div class="confirm-item"><span class="cm">✓</span> Calendar invitation sent to ${eng.nonprofit.name.split(' ')[0]}</div>
             <div class="confirm-item"><span class="cm">✓</span> Calendar invitation sent to ${eng.volunteer.name.split(' ')[0]}</div>
@@ -1098,7 +1098,7 @@ function renderEngagement(){
     <div class="page-head" style="padding-top:0;">
       <div class="eyebrow">ENGAGEMENT ORCHESTRATION</div>
       <h1>${eng.need.structured.type}</h1>
-      <p>${eng.nonprofit.name} × ${eng.volunteer.name} — SkillSetu is managing this engagement end to end.</p>
+      <p>${eng.nonprofit.name} × ${eng.volunteer.name} — Skills For Good is managing this engagement end to end.</p>
     </div>
 
     ${eng.fallbackNotice ? `<div class="struct-card mb-24" style="border-color:var(--danger); background:var(--danger-wash);">
@@ -1167,7 +1167,7 @@ function renderEngagement(){
         </div>
         ${!allDone ? `<div class="card">
           <div class="eyebrow mb-12">FALLBACK SAFEGUARD</div>
-          <p class="tiny mut mb-12">If ${eng.volunteer.name.split(' ')[0]} doesn't respond within 48 hrs, SkillSetu automatically activates the nonprofit's second-choice match, so the engagement never stalls.</p>
+          <p class="tiny mut mb-12">If ${eng.volunteer.name.split(' ')[0]} doesn't respond within 48 hrs, Skills For Good automatically activates the nonprofit's second-choice match, so the engagement never stalls.</p>
           <button class="btn btn-outline btn-sm btn-block" id="simulate-noresponse-btn">Simulate: volunteer doesn't respond →</button>
         </div>` : `<div class="card">
           <div class="eyebrow mb-12">NEXT STEP</div>
@@ -1404,7 +1404,7 @@ function attachHandlers(){
     const second = matches[1];
     const secondVol = VOLUNTEERS.find(v=>v.id===second.vid);
     eng.volunteer = secondVol;
-    eng.fallbackNotice = `The original volunteer did not respond within 48 hours. SkillSetu automatically activated the nonprofit's second-choice match — ${secondVol.name} — so the engagement continued without delay.`;
+    eng.fallbackNotice = `The original volunteer did not respond within 48 hours. Skills For Good automatically activated the nonprofit's second-choice match — ${secondVol.name} — so the engagement continued without delay.`;
     eng.comms = [
       {from:'system', text:`Reassigned to ${secondVol.name} after no response from the original match.`, t:'now'},
       {from:'volunteer', text:`Hi, I'd be glad to help with this — looking forward to it!`, t:'just now'},
