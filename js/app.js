@@ -18,6 +18,16 @@ const E = UI.esc;
 const $ = id => document.getElementById(id);
 const currentRoute = () => (location.hash.replace(/^#\/?/, "") || "home").split("?")[0];
 
+const OPTIONS = {
+  skills: ["Data Analysis", "Donor Pitches", "Marketing & Comms", "Research & Insights", "Process Automation", "Content writing", "Creative design"],
+  sectors: ["Education", "Livelihood", "Environment", "Gender", "Healthcare", "No preference"],
+  needs: ["Communication collateral", "Fundraising pitch collateral", "Research and insights", "Data analysis", "Process automation"],
+  education: ["Bachelors", "Masters", "Doctoral", "CA / CFA", "Other"],
+  orgType: ["Section-8 NPO", "Trust", "Society", "Other"],
+  budget: ["Under ₹10 lakh", "₹10–50 lakh", "₹50 lakh – ₹1 crore", "₹1–5 crore", "Above ₹5 crore"]
+};
+const opts = list => list.map(o => `<option>${E(o)}</option>`).join("");
+
 /* ---------------- Views ---------------- */
 const VIEWS = {
   home() {
@@ -27,8 +37,9 @@ const VIEWS = {
         <h1>You know something someone needs.</h1>
         <p>Verified nonprofits describe a specific need. Experienced professionals give a few hours. One nonprofit, one volunteer, one need. No payments, no bidding.</p>
         <div class="actions">
-          <a class="btn btn-accent" href="#/projects">See open needs →</a>
-          <a class="btn btn-outline" href="#/post">Post a need</a>
+          <a class="btn btn-accent" href="#/join/volunteer">Join as a volunteer →</a>
+          <a class="btn btn-outline" href="#/join/ngo">Register your nonprofit</a>
+          <a class="btn btn-ghost" href="#/projects">See open needs</a>
         </div>
       </section>
       <section class="section">
@@ -56,8 +67,16 @@ const VIEWS = {
 
   login() {
     const L = S.login;
-    let body = "";
-    if (L.step === "email") {
+    let body;
+    if (L.step === "otp") {
+      body = `<p class="small muted">We sent a 6-digit code to <strong>${E(L.email)}</strong>. It expires in 15 minutes.</p>
+      <form data-form="otp">
+        <label class="fl">Access code</label>
+        <input class="otp" type="text" name="otp" inputmode="numeric" maxlength="6" required autocomplete="one-time-code">
+        <button class="btn btn-primary btn-block" style="margin-top:20px" ${S.busy ? "disabled" : ""}>Verify and continue →</button>
+        <button type="button" class="btn btn-ghost btn-block" data-action="login-back">Use a different email</button>
+      </form>`;
+    } else {
       body = `<form data-form="email">
         <label class="fl">I am a</label>
         <div class="seg">
@@ -67,54 +86,75 @@ const VIEWS = {
         <label class="fl">Email</label>
         <input type="email" name="email" required value="${E(L.email)}" placeholder="you@example.com">
         <button class="btn btn-primary btn-block" style="margin-top:20px" ${S.busy ? "disabled" : ""}>Send me a code →</button>
-      </form>`;
-    } else if (L.step === "otp") {
-      body = `<p class="small muted">We sent a 6-digit code to <strong>${E(L.email)}</strong>. It expires in 15 minutes.</p>
-      <form data-form="otp">
-        <label class="fl">Access code</label>
-        <input class="otp" type="text" name="otp" inputmode="numeric" maxlength="6" required autocomplete="one-time-code">
-        <button class="btn btn-primary btn-block" style="margin-top:20px" ${S.busy ? "disabled" : ""}>Verify and continue →</button>
-        <button type="button" class="btn btn-ghost btn-block" data-action="login-back">Use a different email</button>
-      </form>`;
-    } else {
-      body = `<p class="small muted">We couldn't find <strong>${E(L.email)}</strong>. Join the volunteer network. It takes a minute.</p>
-      <form data-form="register">
-        <label class="fl">Full name</label><input type="text" name="name" required>
-        <label class="fl">Phone (optional)</label><input type="tel" name="phone">
-        <label class="fl">LinkedIn URL</label><input type="text" name="linkedin" required placeholder="https://www.linkedin.com/in/...">
-        <label class="fl">Skills you can offer (comma separated)</label><input type="text" name="skills" required placeholder="Data analysis, Donor pitches, Marketing">
-        <label class="fl">Causes you care about</label><input type="text" name="interest" placeholder="Education, Healthcare">
-        <label class="fl">Hours per week you can give</label><input type="number" name="hours" min="1" max="40" value="3">
-        <label class="small" style="display:flex;gap:8px;margin-top:16px"><input type="checkbox" name="agree" required> I agree to be contacted about volunteering opportunities.</label>
-        <button class="btn btn-primary btn-block" style="margin-top:20px" ${S.busy ? "disabled" : ""}>Register and send code →</button>
-        <button type="button" class="btn btn-ghost btn-block" data-action="login-back">Back</button>
-      </form>`;
+      </form>
+      <p class="small muted" style="margin-top:18px">New here? <a href="#/join" style="color:var(--primary);font-weight:600">Join SkillSetu</a></p>`;
     }
-    return `<div class="page-head narrow"><div class="eyebrow">Log in</div><h1>${L.step === "register" ? "Join SkillSetu" : "Welcome"}</h1></div>
+    return `<div class="page-head narrow"><div class="eyebrow">Log in</div><h1>Welcome back</h1></div>
       <div class="narrow card">${L.msg ? UI.banner(L.msg, "err") : ""}${body}</div>`;
+  },
+
+  join() {
+    return `<div class="page-head narrow"><div class="eyebrow">Join SkillSetu</div><h1>How would you like to take part?</h1>
+        <p>You only join once. After that, you log in with a code sent to your email.</p></div>
+      <div class="grid" style="max-width:720px;margin:0 auto 40px">
+        <a class="card" href="#/join/volunteer"><div class="eyebrow">Volunteer</div><h3 style="margin:8px 0">I have skills to give</h3>
+          <p class="small muted">Working professionals who can give a few hours to a nonprofit.</p></a>
+        <a class="card" href="#/join/ngo"><div class="eyebrow">Nonprofit</div><h3 style="margin:8px 0">We need skilled help</h3>
+          <p class="small muted">Register your organisation, then post the needs you want help with.</p></a>
+      </div>`;
+  },
+
+  "join/volunteer"() {
+    return `<div class="page-head narrow"><div class="eyebrow">Join as a volunteer</div><h1>Tell us about yourself</h1>
+        <p>We'll email a code to verify your address. Already a member? <a href="#/login" style="color:var(--primary);font-weight:600">Log in</a>.</p></div>
+      <div class="narrow card"><form data-form="join-volunteer">
+        <label class="fl">Full name</label><input type="text" name="name" required>
+        <label class="fl">Email</label><input type="email" name="email" required>
+        <label class="fl">Phone (optional)</label><input type="tel" name="phone">
+        <label class="fl">LinkedIn profile URL</label><input type="text" name="linkedin" required placeholder="https://www.linkedin.com/in/...">
+        <label class="fl">Highest education</label><select name="education">${opts(OPTIONS.education)}</select>
+        <label class="fl">Year of graduation</label><input type="number" name="graduated" min="1970" max="2035">
+        <label class="fl">Skills you can offer</label>${UI.checks("skills", OPTIONS.skills)}
+        <input type="text" name="skills_other" placeholder="Anything else? (optional)" style="margin-top:10px">
+        <label class="fl">Causes you care about</label>${UI.checks("interest", OPTIONS.sectors)}
+        <label class="fl">Hours per week you can give</label><input type="number" name="hours" min="1" max="40" value="3">
+        <label class="small" style="display:flex;gap:8px;margin-top:18px"><input type="checkbox" name="agree" required> I agree to be contacted about volunteering opportunities.</label>
+        <button class="btn btn-accent btn-block" style="margin-top:22px" ${S.busy ? "disabled" : ""}>Join and send my code →</button>
+      </form></div>`;
+  },
+
+  "join/ngo"() {
+    return `<div class="page-head narrow"><div class="eyebrow">Register your nonprofit</div><h1>Tell us about your organisation</h1>
+        <p>You only do this once. Then you can post needs. Already registered? <a href="#/login" style="color:var(--primary);font-weight:600">Log in</a>.</p></div>
+      <div class="narrow card"><form data-form="join-ngo">
+        <label class="fl">Organisation name</label><input type="text" name="non_profit" required>
+        <label class="fl">Website or social media link</label><input type="text" name="website">
+        <label class="fl">Type of organisation</label><select name="registration_type">${opts(OPTIONS.orgType)}</select>
+        <label class="fl">Annual budget</label><select name="annual_budget">${opts(OPTIONS.budget)}</select>
+        <label class="fl">Sectors you work in</label>${UI.checks("sectors", OPTIONS.sectors)}
+        <label class="fl">Kinds of help you usually need</label>${UI.checks("needs", OPTIONS.needs)}
+        <hr style="border:none;border-top:1px solid var(--line);margin:24px 0 4px">
+        <label class="fl">Your name (main contact)</label><input type="text" name="poc_name" required>
+        <label class="fl">Your role</label><input type="text" name="designation" required placeholder="Founder, Programme Lead…">
+        <label class="fl">Your email</label><input type="email" name="poc_email" required>
+        <label class="fl">Phone</label><input type="tel" name="poc_phone">
+        <label class="fl">LinkedIn (optional)</label><input type="text" name="poc_linkedin">
+        <button class="btn btn-accent btn-block" style="margin-top:22px" ${S.busy ? "disabled" : ""}>Register and send my code →</button>
+      </form></div>`;
   },
 
   post() {
     const u = AUTH.getUser();
     if (!u || u.role !== "NGO") {
       return `<div class="page-head narrow"><div class="eyebrow">For nonprofits</div><h1>Post a need</h1>
-        <p>Log in with your registered nonprofit contact email to describe a need in plain language.</p></div>
-        <div class="narrow"><a class="btn btn-primary" href="#/login" data-action="prefer-ngo">Log in as a nonprofit →</a></div>`;
+        <p>Only registered nonprofits can post. Log in with your contact email, or register your organisation first.</p></div>
+        <div class="narrow" style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-primary" href="#/login" data-action="prefer-ngo">Log in as a nonprofit</a>
+          <a class="btn btn-outline" href="#/join/ngo">Register your nonprofit</a></div>`;
     }
     return `<div class="page-head narrow"><div class="eyebrow">For nonprofits</div><h1>What do you need help with?</h1>
         <p>Describe it the way you'd explain it to a colleague. One need, one volunteer.</p></div>
-      <div class="narrow card"><form data-form="project">
-        <label class="fl">Organisation name</label><input type="text" name="non_profit" required>
-        <label class="fl">Your name</label><input type="text" name="poc_name" required>
-        <label class="fl">Type of help</label>
-        <select name="category"><option>Donor Pitches</option><option>Data Analysis</option><option>Marketing</option>
-          <option>Research &amp; Insights</option><option>Process Automation</option></select>
-        <label class="fl">Describe the need</label><textarea name="problem" rows="4" required></textarea>
-        <label class="fl">Skills that would help (comma separated, optional)</label><input type="text" name="skills">
-        <label class="fl">City / location</label><input type="text" name="location" value="Remote">
-        <label class="fl">Duration (weeks)</label><input type="number" name="weeks" min="1" max="12" value="5">
-        <button class="btn btn-accent btn-block" style="margin-top:22px" ${S.busy ? "disabled" : ""}>Post this need →</button>
-      </form></div>`;
+      <div class="narrow" id="post-body">${UI.loading()}</div>`;
   },
 
   me() {
@@ -138,6 +178,7 @@ async function show() {
   }
   $("view").innerHTML = (VIEWS[r] || VIEWS.home)();
   if (r === "me" && AUTH.isLoggedIn()) loadMe();
+  if (r === "post") loadPost();
 }
 
 async function loadMe() {
@@ -150,6 +191,30 @@ async function loadMe() {
   const sprint = await API.getSprintStatus(profile.active_project_id);
   body.innerHTML = `<p class="muted small" style="margin-bottom:14px">Project ${E(profile.active_project_id)} · stage: ${E(sprint.current_stage)}</p>` +
     (sprint.tasks.length ? sprint.tasks.map(UI.taskItem).join("") : `<div class="card empty">No tasks yet. Your coordinator will add them.</div>`);
+}
+
+async function loadPost() {
+  const u = AUTH.getUser();
+  const body = $("post-body");
+  if (!u || u.role !== "NGO" || !body) return;
+  const p = (await API.getUserProfile()) || {};
+  if (p.approved === false) {
+    body.innerHTML = UI.banner("Your organisation is registered and awaiting approval. You'll be able to post soon.", "warm");
+    return;
+  }
+  const who = p.org_name
+    ? `<p class="small muted">Posting as <strong>${E(p.org_name)}</strong> (${E(p.poc_name)})</p>`
+    : `<label class="fl">Organisation name</label><input type="text" name="non_profit" required>
+       <label class="fl">Your name</label><input type="text" name="poc_name" required>`;
+  body.innerHTML = `<div class="card"><form data-form="project">${who}
+    <label class="fl">Type of help</label>
+    <select name="category"><option>Donor Pitches</option><option>Data Analysis</option><option>Marketing</option><option>Research &amp; Insights</option><option>Process Automation</option></select>
+    <label class="fl">Describe the need</label><textarea name="problem" rows="4" required></textarea>
+    <label class="fl">Skills that would help (comma separated, optional)</label><input type="text" name="skills">
+    <label class="fl">City / location</label><input type="text" name="location" value="Remote">
+    <label class="fl">Duration (weeks)</label><input type="number" name="weeks" min="1" max="12" value="5">
+    <button class="btn btn-accent btn-block" style="margin-top:22px">Post this need →</button>
+  </form></div>`;
 }
 
 function onRoute() {
@@ -209,17 +274,21 @@ async function sendCode(email, role) {
   const res = await API.requestOTP(email, role);
   if (res.status === "success") {
     S.login = { step: "otp", email, role, msg: "" };
-  } else if (res.code === "NOT_REGISTERED" && role === "Volunteer") {
-    S.login = { step: "register", email, role, msg: "" };
-  } else {
-    S.login = { step: "email", email, role, msg: res.message || "Could not send code." };
+    return true;
   }
+  const joinLink = role === "NGO"
+    ? `<a href="#/join/ngo">Register your nonprofit</a>` : `<a href="#/join/volunteer">Join as a volunteer</a>`;
+  const msg = res.code === "NOT_REGISTERED"
+    ? `We couldn't find that email. ${joinLink} first.` : E(res.message || "Could not send code.");
+  S.login = { step: "email", email, role, msg };
+  return false;
 }
+
+const checked = (f, name) => Array.from(f.querySelectorAll(`input[name="${name}"]:checked`)).map(x => x.value);
 
 const FORMS = {
   async email(f) {
-    const email = f.email.value.trim().toLowerCase();
-    await sendCode(email, f.role.value);
+    await sendCode(f.email.value.trim().toLowerCase(), f.role.value);
   },
 
   async otp(f) {
@@ -230,24 +299,46 @@ const FORMS = {
       location.hash = res.role === "NGO" ? "#/post" : "#/projects";
       return;
     }
-    S.login.msg = res.message || "Invalid code.";
+    S.login.msg = E(res.message || "Invalid code.");
   },
 
-  async register(f) {
+  async "join-volunteer"(f) {
+    const email = f.email.value.trim().toLowerCase();
+    const skills = [...checked(f, "skills"), ...f.skills_other.value.split(",").map(x => x.trim()).filter(Boolean)];
+    if (!skills.length) { UI.toast("Please pick at least one skill."); return; }
     const reg = await API.registerVolunteer({
-      name: f.name.value.trim(), email: S.login.email, phone: f.phone.value.trim(),
-      linkedin: f.linkedin.value.trim(), skills: f.skills.value.trim(),
-      interest_sector: f.interest.value.trim(), weekly_hours: f.hours.value, agree: f.agree.checked
+      name: f.name.value.trim(), email, phone: f.phone.value.trim(), linkedin: f.linkedin.value.trim(),
+      education: f.education.value, graduated: f.graduated.value, skills,
+      interest_sector: checked(f, "interest"), weekly_hours: f.hours.value, agree: f.agree.checked
     });
-    if (reg.status !== "success") { S.login.msg = reg.message || "Registration failed."; return; }
-    await sendCode(S.login.email, "Volunteer");
+    if (reg.status !== "success") { UI.toast(reg.message || "Could not register."); return; }
+    await sendCode(email, "Volunteer");
+    UI.toast(reg.already_registered ? "You're already a member. We sent a login code." : "Welcome! We sent a code to verify your email.");
+    location.hash = "#/login";
+  },
+
+  async "join-ngo"(f) {
+    const email = f.poc_email.value.trim().toLowerCase();
+    const reg = await API.registerNgo({
+      non_profit: f.non_profit.value.trim(), website: f.website.value.trim(),
+      registration_type: f.registration_type.value, annual_budget: f.annual_budget.value,
+      sectors: checked(f, "sectors"), needs: checked(f, "needs"),
+      poc_name: f.poc_name.value.trim(), designation: f.designation.value.trim(),
+      poc_email: email, poc_phone: f.poc_phone.value.trim(), poc_linkedin: f.poc_linkedin.value.trim()
+    });
+    if (reg.status !== "success") { UI.toast(reg.message || "Could not register."); return; }
+    S.login.role = "NGO";
+    await sendCode(email, "NGO");
+    UI.toast(reg.already_registered ? "This contact is already registered. We sent a login code." : "Registered! We sent a code to verify your email.");
+    location.hash = "#/login";
   },
 
   async project(f) {
+    const val = n => (f[n] ? f[n].value.trim() : "");
     const res = await API.submitProject({
-      non_profit: f.non_profit.value.trim(), poc_name: f.poc_name.value.trim(),
-      category: f.category.value, problem: f.problem.value.trim(),
-      suggested_skills: f.skills.value.trim(), location: f.location.value.trim(),
+      non_profit: val("non_profit"), poc_name: val("poc_name"),
+      category: f.category.value, problem: val("problem"),
+      suggested_skills: val("skills"), location: val("location"),
       duration_weeks: f.weeks.value
     });
     if (res.status === "success") {
