@@ -35,7 +35,7 @@ const UI = {
         ${u && u.role === "Volunteer" ? link("me", "My engagement") : ""}
         ${u
           ? `<button class="btn btn-ghost btn-sm" data-action="logout">Log out</button>`
-          : `<a class="btn btn-primary btn-sm" href="#/login">Log in</a>`}
+          : `${link("join", "Join")}<a class="btn btn-primary btn-sm" href="#/login">Log in</a>`}
       </nav>
     </div>`;
   },
@@ -62,6 +62,12 @@ const UI = {
       ? "We've emailed you and the NGO an introduction."
       : "Our coordinator will introduce you to the NGO shortly.";
     return UI.banner(`<strong>Application sent (${UI.esc(res.app_id)}).</strong> ${intro} The NGO has about ${days} days to respond.`);
+  },
+
+  /** Pill-style checkbox group. */
+  checks(name, options) {
+    return `<div class="checks">${options.map(o =>
+      `<label class="chk"><input type="checkbox" name="${UI.esc(name)}" value="${UI.esc(o)}"> ${UI.esc(o)}</label>`).join("")}</div>`;
   },
 
   taskItem(t) {
