@@ -36,6 +36,11 @@ const API = {
     return this.post({ action: "register_volunteer", ...data });
   },
 
+  /** Register a new nonprofit (once). Needed before it can log in and post needs. */
+  async registerNgo(data) {
+    return this.post({ action: "register_ngo", ...data });
+  },
+
   /** Request a 6-digit OTP. May return { code: "NOT_REGISTERED" }. */
   async requestOTP(email, role = "Volunteer") {
     return this.post({ action: "request_otp", email, role });
